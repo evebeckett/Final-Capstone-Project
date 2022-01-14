@@ -5,13 +5,10 @@ function ReservationForm() {
 
   const history = useHistory();
   
-  async function handleSubmit() {
-    try {
-
-    } catch (e) {
-      console.log(e);
-      
-    }
+  
+  function handleSubmit(event) {
+    event.preventDefault();
+    
   }
 
   return (
@@ -67,7 +64,7 @@ function ReservationForm() {
         <div class="form-group col-md-6">
           <label for="numberOfPeople">Number of People</label>
           <input type="number" min="1" name="people" placeholder="1" required></input>
-        </div>11
+        </div>
 
         <div>
           <button type="submit" class="btn btn-primary" onClick = {handleSubmit}>
