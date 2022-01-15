@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import ReservationForm from "../miscellaneous/ReservationForm";
 
 function Reservations() {
@@ -8,6 +8,6 @@ function Reservations() {
             <ReservationForm />
         </div>
     );
-  }
+  };
   
   export default Reservations;
