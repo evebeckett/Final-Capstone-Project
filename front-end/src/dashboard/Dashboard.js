@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import {useHistory} from "react-router-dom";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import {previous, next, today} from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -9,6 +11,7 @@ import ErrorAlert from "../layout/ErrorAlert";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+  let history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
@@ -27,15 +30,45 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for ${date}</h4>
+        <h4 className="mb-0">Reservations for {date}</h4>
       </div>
       <div>
-      <button class="btn btn-primary" type="button">Previous</button>
-      <button class="btn btn-primary" type="button">Today</button>
-      <button class="btn btn-primary" type="button">Next</button>
+      <button className="btn btn-primary" type="button" onClick={() => history.push(`/dashboard?date=${previous(date)}`)}>Previous</button>
+      <button className="btn btn-primary" type="button" onClick={() => history.push(`/dashboard?date=${today(date)}`)}>Today</button>
+      <button className="btn btn-primary" type="button"onClick={() => history.push(`/dashboard?date=${next(date)}`)}>Next</button>
       </div>
+      <div>
       <ErrorAlert error={reservationsError} />
-      {JSON.stringify(reservations)}
+      
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Mobile Number</th>
+          <th>People</th>
+          <th>Reservation Time</th>
+          <th>Reservation Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {reservations.map((reservation) => {
+      console.log(reservation.last_name)
+      return (
+        <tr>
+          <td>{reservation.last_name}</td>
+          <td>{reservation.first_name}</td>
+          <td>{reservation.mobile_number}</td>
+          <td>{reservation.people}</td>
+          <td>{reservation.reservation_time}</td>
+          <td>{reservation.reservation_date}</td>
+        </tr>
+      )
+    })  }
+        </tbody>
+      </table>
+      
     </main>
   );
 }

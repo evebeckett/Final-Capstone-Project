@@ -57,11 +57,13 @@ export function today() {
  *  the date one day prior to currentDate, formatted as YYYY-MM-DD
  */
 export function previous(currentDate) {
+  console.log(currentDate)
   let [ year, month, day ] = currentDate.split("-");
   month -= 1;
   const date = new Date(year, month, day);
   date.setMonth(date.getMonth());
   date.setDate(date.getDate() - 1);
+  console.log(asDateString(date))
   return asDateString(date);
 }
 
