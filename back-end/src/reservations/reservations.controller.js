@@ -29,6 +29,31 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 }
 
+function validatePeople(req, res, next) {
+    const { data = {} } = req.body;
+
+    try {
+      
+        if (isNaN(parseInt(data.people))) {
+          const error = new Error("'People' must be a number.");
+          error.status = 400;
+          throw error;
+        }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+function validateReservationTime() {
+  return null;
+}
+
+function validateDate() {
+  return null;
+}
+
 async function create (req, res, next) {
  reservationsService
  .create(req.body.data)
@@ -36,14 +61,18 @@ async function create (req, res, next) {
  .catch(next)
 }
 
+
+
 async function list(req, res) {
-  let date = req.query.date;
-  const data = await reservationsService.list(date);
+  let {date} = req.query;
+
+   let data = await reservationsService.list(date);
+   
   res.json({data});
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, create] 
+  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, create] 
 };
 

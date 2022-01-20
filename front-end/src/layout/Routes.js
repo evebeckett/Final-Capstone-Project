@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
@@ -34,7 +34,7 @@ function Routes() {
         <Reservations />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={date} />
+        <Dashboard date={date || today()} />
       </Route>
       <Route>
         <NotFound />

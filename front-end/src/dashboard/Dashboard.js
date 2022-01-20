@@ -54,7 +54,6 @@ function Dashboard({ date }) {
         </thead>
         <tbody>
         {reservations.map((reservation) => {
-      console.log(reservation.last_name)
       return (
         <tr>
           <td>{reservation.last_name}</td>

@@ -28,7 +28,6 @@ function handleChange(event) {
 async function handleSubmit(event) {
   
     event.preventDefault();
-    console.log(newReservation);
      const url = `${API_BASE_URL}/reservations`;
      const options = {
       method: "POST",
