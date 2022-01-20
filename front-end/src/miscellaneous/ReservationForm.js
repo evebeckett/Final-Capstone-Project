@@ -25,6 +25,15 @@ function handleChange(event) {
   });
 }
 
+function handleNumberChange(event) {
+  setNewReservation({
+    ...newReservation,
+
+    // Trimming any whitespace
+    [event.target.name]: parseInt(event.target.value.trim())
+  });
+}
+
 async function handleSubmit(event) {
   
     event.preventDefault();
@@ -36,8 +45,9 @@ async function handleSubmit(event) {
     };
     let resDate = newReservation["reservation_date"];
     
+    await fetch(url,options);
+    
     history.push(`/dashboard?date=${resDate}`);
-    return await fetch(url,options);
 
   }
 
@@ -104,7 +114,7 @@ async function handleSubmit(event) {
           min="1" 
           name="people" 
           placeholder="1" 
-          onChange={handleChange} 
+          onChange={handleNumberChange} 
           required></input>
         </div>
 

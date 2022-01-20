@@ -31,12 +31,40 @@ function hasOnlyValidProperties(req, res, next) {
 
 function validatePeople(req, res, next) {
     const { data = {} } = req.body;
-
     try {
-      
-        if (isNaN(parseInt(data.people))) {
+        if (typeof data.people !== "number" || data.people <= 0) {
           const error = new Error("'People' must be a number.");
           error.status = 400;
+          error.message = "people must be a number."
+          throw error;
+        }
+      console.log("people is working")
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+function validateDate(req, res, next) {
+  console.log("Hello")
+  console.log(req.body.data)
+  const { reservation_date } = req.body.data;
+
+  console.log("Hello again")
+  
+  const dateFormat = /\d\d\d\d-\d\d-\d\d/;
+  
+  console.log("Hello a third time")
+  
+  console.log(`data: ${reservation_date}`)
+
+  console.log(`isMatch: ${dateFormat.test(reservation_date)}`)
+  
+  try {
+        if (!dateFormat.test(reservation_date)) {
+          const error = new Error("reservation_date must be in the proper format");
+          error.status = 400;
+          error.message = "reservation_date must be in the proper format"
           throw error;
         }
       next();
@@ -45,14 +73,24 @@ function validatePeople(req, res, next) {
     }
   };
 
+  function validateTime(req, res, next) {
+    const { data = {} } = req.body;
+    const timeFormat = /\d\d:\d\d/;
+  
+      try {
+          if (!data.reservation_time.match(timeFormat)) {
+            const error = new Error("'reservation_time' must be in the proper format.");
+            error.status = 400;
+            error.message = "reservation_time must be in the proper format"
+            throw error;
+          }
+        next();
+      } catch (error) {
+        next(error);
+      }
+    };
+  
 
-function validateReservationTime() {
-  return null;
-}
-
-function validateDate() {
-  return null;
-}
 
 async function create (req, res, next) {
  reservationsService
@@ -73,6 +111,6 @@ async function list(req, res) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, create] 
+  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, asyncErrorBoundary(create)] 
 };
 
