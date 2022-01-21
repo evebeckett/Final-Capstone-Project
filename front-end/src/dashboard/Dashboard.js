@@ -4,6 +4,7 @@ import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import {previous, next, today} from "../utils/date-time";
 
+console.log("HELLO")
 /**
  * Defines the dashboard page.
  * @param date
