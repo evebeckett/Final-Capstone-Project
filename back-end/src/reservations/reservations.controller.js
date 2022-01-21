@@ -126,6 +126,31 @@ function reservationNotOnTuesday (req, res, next) {
         }
     }
 
+function validateReservationTime (req, res, next) {
+  const { reservation_date, reservation_time } = req.body.data;
+  let requestedDate = new Date(reservation_date + " " + reservation_time)
+
+  let hoursOpen = new Date(reservation_date + " " + "10:30:00")
+
+ let hoursClosed = new Date(reservation_date + " " + "21:30:00")
+ 
+  
+    try {
+    
+      if (requestedDate.getTime() < hoursOpen.getTime() || requestedDate.getTime() > hoursClosed.getTime()) {
+      const error = new Error("The restaurant only accepts reservations between 10:30 a.m. and 9:30 p.m.  Please choose another reservation time.");
+      error.status = 400;
+      error.message = "The restaurant only accepts reservations between 10:30 a.m. and 9:30 p.m.  Please choose another reservation time.."
+      throw error;
+            }
+          next();
+        } catch (error) {
+          console.log("error")
+          next(error);
+        }
+    }
+
+
 async function create (req, res, next) {
  reservationsService
  .create(req.body.data)
@@ -133,17 +158,17 @@ async function create (req, res, next) {
  .catch(next)
 }
 
-async function list(req, res) {
+async function list(req, res, next) {
   let {date} = req.query;
 
    let data = await reservationsService.list(date);
    
   res.json({data});
-  console.log("HELLO")
+  
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, reservationNotOnTuesday, reservationNotInPast, asyncErrorBoundary(create)] 
+  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, reservationNotOnTuesday, reservationNotInPast, validateReservationTime, asyncErrorBoundary(create)] 
 };
 
