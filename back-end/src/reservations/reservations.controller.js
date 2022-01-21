@@ -139,6 +139,7 @@ async function list(req, res) {
    let data = await reservationsService.list(date);
    
   res.json({data});
+  console.log("HELLO")
 }
 
 module.exports = {
