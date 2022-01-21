@@ -38,7 +38,7 @@ function validatePeople(req, res, next) {
           error.message = "people must be a number."
           throw error;
         }
-      console.log("people is working")
+     
       next();
     } catch (error) {
       next(error);
@@ -46,19 +46,10 @@ function validatePeople(req, res, next) {
   };
 
 function validateDate(req, res, next) {
-  console.log("Hello")
-  console.log(req.body.data)
+  
   const { reservation_date } = req.body.data;
-
-  console.log("Hello again")
   
   const dateFormat = /\d\d\d\d-\d\d-\d\d/;
-  
-  console.log("Hello a third time")
-  
-  console.log(`data: ${reservation_date}`)
-
-  console.log(`isMatch: ${dateFormat.test(reservation_date)}`)
   
   try {
         if (!dateFormat.test(reservation_date)) {
@@ -90,7 +81,50 @@ function validateDate(req, res, next) {
       }
     };
   
+function reservationNotOnTuesday (req, res, next) {
+  const { reservation_date, reservation_time } = req.body.data;
+  
+  let date = new Date(reservation_date + " " + reservation_time)
+  console.log(date)
+  console.log(date)
+  let dayOfWeek = date.getDay()
 
+  try {
+  
+    if (dayOfWeek === 2) {
+    const error = new Error("The restaurant is closed on Tuesdays. Please pick another date.");
+    error.status = 400;
+    error.message = "The restaurant is closed on Tuesdays.  Please pick another date."
+    throw error;
+          }
+        next();
+      } catch (error) {
+        
+        next(error);
+      }
+  }
+
+  function reservationNotInPast (req, res, next) {
+    const { reservation_date, reservation_time } = req.body.data;
+    
+    let date = new Date(reservation_date + " " + reservation_time)
+    let today = new Date();
+  
+  
+    try {
+    
+      if (date.getTime() < today.getTime()) {
+      const error = new Error("You cannot create reservations in the past.");
+      error.status = 400;
+      error.message = "You cannot create reservations in the past. Please choose a date in the future."
+      throw error;
+            }
+          next();
+        } catch (error) {
+          console.log("error")
+          next(error);
+        }
+    }
 
 async function create (req, res, next) {
  reservationsService
@@ -98,8 +132,6 @@ async function create (req, res, next) {
  .then((data) => res.status(201).json({ data }))
  .catch(next)
 }
-
-
 
 async function list(req, res) {
   let {date} = req.query;
@@ -111,6 +143,6 @@ async function list(req, res) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, asyncErrorBoundary(create)] 
+  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, reservationNotOnTuesday, reservationNotInPast, asyncErrorBoundary(create)] 
 };
 

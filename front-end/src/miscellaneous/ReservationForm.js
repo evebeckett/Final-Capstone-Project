@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {useHistory} from "react-router-dom";
-const fetch = require("cross-fetch");
+import ErrorAlert from "../layout/ErrorAlert";
+import { fetchJson } from "../utils/api";
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
@@ -15,6 +16,7 @@ function ReservationForm() {
   };
   const history = useHistory();
   const [newReservation, setNewReservation] = useState(initialFormData);
+  const [reserveError, setReserveError] = useState(null);
 
 function handleChange(event) {
   setNewReservation({
@@ -35,26 +37,30 @@ function handleNumberChange(event) {
 }
 
 async function handleSubmit(event) {
-  
+    const abortController = new AbortController();
     event.preventDefault();
+    setReserveError(null);
+  
      const url = `${API_BASE_URL}/reservations`;
      const options = {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({data: newReservation})
+      body: JSON.stringify({data: newReservation}),
+      signal: abortController.signal,
     };
     let resDate = newReservation["reservation_date"];
     
-    await fetch(url,options);
+   
+    fetchJson(url,options).then(() => history.push(`/dashboard?date=${resDate}`)).catch(setReserveError)
     
-    history.push(`/dashboard?date=${resDate}`);
-
+    return () => abortController.abort();
   }
 
   
 
   return (
     <div>
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group col-md-6">
           <label htmlFor="firstName">First Name</label>
@@ -128,7 +134,10 @@ async function handleSubmit(event) {
         </div>
         
       </form>
+      <ErrorAlert error={reserveError} />
     </div>
+    
+  
   );
 }
 
