@@ -1,5 +1,4 @@
 const reservationsService = require("./reservations.service");
-// const { default: Reservations } = require("../../../front-end/src/reservations/Reservations");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 const hasProperties = require("../errors/hasProperties");
 const hasRequiredProperties = hasProperties("first_name", "last_name", "mobile_number", "reservation_date", "reservation_time", "people");
@@ -152,6 +151,7 @@ function validateReservationTime (req, res, next) {
 
 
 async function create (req, res, next) {
+
  reservationsService
  .create(req.body.data)
  .then((data) => res.status(201).json({ data }))

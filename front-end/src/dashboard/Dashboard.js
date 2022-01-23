@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {useHistory} from "react-router-dom";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import {previous, next, today} from "../utils/date-time";
+import ReservationsTable from "../miscellaneous/ReservationsTable";
+import ReservationsNavBtns from "../miscellaneous/ReservationsNavBtns";
+import TablesTable from "../miscellaneous/TablesTable";
 
-console.log("HELLO")
 /**
  * Defines the dashboard page.
  * @param date
@@ -12,18 +12,20 @@ console.log("HELLO")
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
-  let history = useHistory();
   const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
     const abortController = new AbortController();
-    setReservationsError(null);
+    setError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
-      .catch(setReservationsError);
+      .catch(setError);
+
+    listTables(abortController.signal).then(setTables).catch(setError);
     return () => abortController.abort();
   }
 
@@ -33,42 +35,10 @@ function Dashboard({ date }) {
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for {date}</h4>
       </div>
-      <div>
-      <button className="btn btn-primary" type="button" onClick={() => history.push(`/dashboard?date=${previous(date)}`)}>Previous</button>
-      <button className="btn btn-primary" type="button" onClick={() => history.push(`/dashboard?date=${today(date)}`)}>Today</button>
-      <button className="btn btn-primary" type="button"onClick={() => history.push(`/dashboard?date=${next(date)}`)}>Next</button>
-      </div>
-      <div>
-      <ErrorAlert error={reservationsError} />
-      
-      </div>
-      <table>
-        <thead>
-        <tr>
-          <th>Last Name</th>
-          <th>First Name</th>
-          <th>Mobile Number</th>
-          <th>People</th>
-          <th>Reservation Time</th>
-          <th>Reservation Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        {reservations.map((reservation) => {
-      return (
-        <tr>
-          <td>{reservation.last_name}</td>
-          <td>{reservation.first_name}</td>
-          <td>{reservation.mobile_number}</td>
-          <td>{reservation.people}</td>
-          <td>{reservation.reservation_time}</td>
-          <td>{reservation.reservation_date}</td>
-        </tr>
-      )
-    })  }
-        </tbody>
-      </table>
-      
+      <ReservationsNavBtns date={date} />
+      <ErrorAlert error={error} />
+      <ReservationsTable reservations={reservations} />
+      <TablesTable tables={tables} />
     </main>
   );
 }
