@@ -12,4 +12,10 @@ function create(newTable) {
     .then((createdRecords) => createdRecords[0])
 }
 
-module.exports={ list, create }
+function update(table) {
+    return knex("tables")
+    .where("table_id", table.table_id)
+    .update(table)
+  }
+
+module.exports={ list, create, update }

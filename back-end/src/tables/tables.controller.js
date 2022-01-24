@@ -17,8 +17,21 @@ async function create (req, res, next) {
    
  }
 
+ async function update(req, res, next){
+  // find reservation_id
+  let reservation_id = req.body.data;
+  console.log(reservation_id)
+  //save reservation_id into tables table
+  //verify to make sure it works
+  
+  const data = (await tablesService.update(reservation_id)
+  
+  res.status(200).json({data})
+}
+
 module.exports = {
     list,
-    create
+    create,
+    update,
   };
   
