@@ -10,6 +10,7 @@ function TablesForm () {
     const initialFormObject = {
         table_name: "",
         capacity:"",
+        reservation_id: null,
     }
     const history = useHistory();
     
@@ -24,6 +25,15 @@ function TablesForm () {
             // Trimming any whitespace
             [event.target.name]: event.target.value.trim()
           });
+    }
+
+    function handleNumberChange(event) {
+      setNewTable({
+        ...newTable,
+    
+        // Trimming any whitespace
+        [event.target.name]: parseInt(event.target.value.trim())
+      });
     }
 
     function handleSubmit (event) {
@@ -63,10 +73,10 @@ function TablesForm () {
         <div className="form-group col-md-6">
           <label htmlFor="capacity">Capacity</label>
           <input
-            type="text"
+            type="number"
             name="capacity"
             placeholder="Capacity"
-            onChange={handleChange}
+            onChange={handleNumberChange}
             required
           ></input>
         </div>

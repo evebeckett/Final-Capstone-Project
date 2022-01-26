@@ -4,6 +4,11 @@ function list(date) {
     return knex("reservations").select("*").where({"reservation_date":date}).orderBy("reservation_time");
 }
 
+function listSingleReservation(reservationId) {
+    return knex("reservations").select("*").where({"reservations.reservation_id": reservationId}).first()
+}
+    
+
 function create(newReservation) {
     return knex("reservations")
     .insert(newReservation)
@@ -11,4 +16,4 @@ function create(newReservation) {
     .then((createdRecords) => createdRecords[0])
 }
 
-module.exports={ list, create };
+module.exports={ list, listSingleReservation, create };

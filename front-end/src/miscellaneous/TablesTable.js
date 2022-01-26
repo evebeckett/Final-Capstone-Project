@@ -1,4 +1,5 @@
 import React from "react";
+import uniqid from "uniqid";
 
 function ReservationsTable({ tables }) {
   return (
@@ -13,10 +14,10 @@ function ReservationsTable({ tables }) {
       <tbody>
         {tables.map((table) => {
           return (
-            <tr>
-              <td>{table.table_name}</td>
-              <td>{table.capacity}</td>
-              <td data-table-id-status={table.table_id}>Include Availability</td>
+            <tr key={uniqid()}>
+              <td key={uniqid()}>{table.table_name}</td>
+              <td key={uniqid()}>{table.capacity}</td>
+              <td key={uniqid()} data-table-id-status={table.table_id}>Include Availability</td>
             </tr>
           );
         })}

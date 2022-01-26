@@ -1,6 +1,8 @@
 import React from "react";
+import uniqid from "uniqid";
 
 function ReservationsTable({ reservations }) {
+  
   return (
     <table>
       <thead>
@@ -16,16 +18,18 @@ function ReservationsTable({ reservations }) {
       <tbody>
         {reservations.map((reservation) => {
           return (
-            <tr>
-              <td>{reservation.last_name}</td>
-              <td>{reservation.first_name}</td>
-              <td>{reservation.mobile_number}</td>
-              <td>{reservation.people}</td>
-              <td>{reservation.reservation_time}</td>
-              <td>{reservation.reservation_date}</td>
-              <td>
+            <tr key={uniqid()}>
+              <td key={uniqid()}>{reservation.last_name}</td>
+              <td key={uniqid()}>{reservation.first_name}</td>
+              <td key={uniqid()}>{reservation.mobile_number}</td>
+              <td key={uniqid()}>{reservation.people}</td>
+              <td key={uniqid()}>{reservation.reservation_time}</td>
+              <td key={uniqid()}>{reservation.reservation_date}</td>
+              <td key={uniqid()}>
                 <a href={`/reservations/${reservation.reservation_id}/seat`}>
+                <button >
                   Seat
+                </button>
                 </a>
               </td>
             </tr>

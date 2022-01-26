@@ -169,6 +169,15 @@ async function list(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, validatePeople, validateDate, validateTime, reservationNotOnTuesday, reservationNotInPast, validateReservationTime, asyncErrorBoundary(create)] 
+  create: [
+    hasOnlyValidProperties, 
+    hasRequiredProperties, 
+    validatePeople, 
+    validateDate, 
+    validateTime, 
+    reservationNotOnTuesday, 
+    reservationNotInPast, 
+    validateReservationTime, 
+    asyncErrorBoundary(create)] 
 };
 

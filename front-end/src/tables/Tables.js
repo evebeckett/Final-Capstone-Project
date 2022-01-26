@@ -5,6 +5,7 @@ function Tables() {
   return (
     <div>
       <TablesForm />
+      
     </div>
   );
 }
