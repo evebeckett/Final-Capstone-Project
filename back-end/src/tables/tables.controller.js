@@ -58,34 +58,48 @@ function validateTableName(req, res, next) {
     next(error);
   }
 }
-
-function validateNotOccupied(req, res, next) {
-  const { data = {} } = req.body;
-  try {
-      if (typeof data.reservation_id === "number") {
-        const error = new Error("This table is currently occupied.  Please choose another table.");
-        error.status = 400;
-        error.message = "This table is currently occupied.  Please choose another table."
-        throw error;
-      }
-   
-    next();
-  } catch (error) {
-    console.error(error)
-    next(error);
-  }
-}
+    async function validateNotOccupied(req, res, next) {
+      const { data = {} } = req.body;
+      let tableId = req.params.table_id;
+      console.log(data)
+      let table = await tablesService.listSingleTable(tableId)
+      console.log(table.reservation_id, "table.reservation_id")
+      if (table.reservation_id) {
+      return next({
+        status: 400,
+        message: "occupied"
+      }) } next()
+    }
+// function validateNotOccupied(req, res, next) {
+//   const { data = {} } = req.body;
+//   try {
+//       if (typeof data.reservation_id === "number") {
+//         const error = new Error(
+//           // "This table is currently occupied.  Please choose another table."
+//            );
+//         // error.status = 400;
+//         // error.message = "This table is currently occupied.  Please choose another table."
+//         throw error;
+//       }
+//     res.status(200)
+//     next();
+//   } catch (error) {
+//     console.error(error)
+    
+//     return next(error);
+//   }
+// }
 
 function validateReservationId(req, res, next) {
   const { data = {} } = req.body;
   try {
-      if (!data.reservation_id || Number(data.reservation_id) === NaN) {
+      if (!data.reservation_id) {
         const error = new Error("reservation_id is missing");
         error.status = 400;
         error.message = "reservation_id is missing"
         throw error;
       }
-   
+    res.status(200)
     next();
   } catch (error) {
     console.error(error)
@@ -93,34 +107,70 @@ function validateReservationId(req, res, next) {
   }
 }
 
-// async function validateSufficientTableCapacity(req, res, next) {
-//   const { data = {} } = req.body;
-//   let reservationId = data.reservation_id
- 
+async function validateReservationIdExists (req, res, next) {
+  const { data = {} } = req.body;
+
+  res.locals.reservation = (await reservationsService.listSingleReservation(data.reservation_id));
+  console.log(res.locals.reservation, "res.locals.reservation")
+  if (!res.locals.reservation) {
+    return next({
+    status: 404,
+    message: `reservation_id ${data.reservation_id} does not exist.`
+  }) } next()
+}
+
+// async function validateReservationIdExists(req, res, next) {
+//   const {data = {}} = req.body;
+//   const reservationId = data.reservation_id;
+  
 //   try {
-     
-//       let reservation = await reservationsService.listSingleReservation(reservationId)
-      
-//       let table = await tablesService.listSingleTable(reservationId)
-      
-//       console.log(reservation.people, "people")
-
-//       console.log(table.capacity, "capacity")
-      
-
-//       if (Number(table.capacity) < Number(reservation.people)) {
-//         const error = new Error("the number of people exceeds the table capacity");
-//         error.status = 400;
-//         error.message = "the number of people exceeds the table capacity";
-//         throw error;
-//       }
-      
-//     next();
-//   } catch (error) {
-//     console.error(error)
-//     next(error);
-//   }
+//     let reservation = await reservationsService.listSingleReservation(reservationId);
+//     if (!reservation) {
+//       const error = new Error(`reservation_id ${reservationId} does not exist.`);
+//       error.status = 400;
+//       error.message = `reservation_id ${reservationId} does not exist.`
+//       throw error;
+//     }
+ 
+//   next();
+// } catch (error) {
+//   console.error(error)
+//   next(error);
 // }
+
+// }
+
+async function validateSufficientTableCapacity(req, res, next) {
+  const { data = {} } = req.body;
+  let reservationId = data.reservation_id;
+  let tableId = req.params.table_id;
+ 
+  try {
+     
+      let reservation = await reservationsService.listSingleReservation(reservationId)
+      
+      let table = await tablesService.listSingleTable(tableId)
+      
+      console.log(reservation.people, "people")
+
+      console.log(table.capacity, "capacity")
+      
+
+      if (Number(table.capacity) < Number(reservation.people)) {
+        const error = new Error("the number of people exceeds the table capacity");
+        error.status = 400;
+        error.message = "the number of people exceeds the table capacity";
+        throw error;
+      } else {
+     
+     res.status(200)
+     next();
+   }
+  } catch (error) {
+    console.error(error)
+    next(error);
+  }
+}
 
 async function create (req, res, next) {
   
@@ -165,20 +215,21 @@ async function create (req, res, next) {
 }
 
 module.exports = {
-    list,
+    list: [asyncErrorBoundary(list)],
     create: [
       hasRequiredProperties, 
       hasOnlyValidProperties, 
       validateCapacity, 
       validateTableName,
-      create
+      asyncErrorBoundary(create)
     ],
     
     update: [
-      validateNotOccupied,
       validateReservationId,
-      // validateSufficientTableCapacity,
-      update,
+      validateReservationIdExists,
+      validateSufficientTableCapacity,
+      validateNotOccupied,
+      asyncErrorBoundary(update),
     ],
   };
   

@@ -158,6 +158,15 @@ async function create (req, res, next) {
  .catch(next)
 }
 
+async function validateReservationId (req, res, next) {
+  let reservationId = req.params.reservation_id;
+  let data = await reservationsService.listSingleReservation(reservationId);
+  console.log(data, "data - validateReservationId")
+  if (data) {
+    res.status(200).json({data})
+  }
+}
+
 async function list(req, res, next) {
   let {date} = req.query;
 
@@ -178,6 +187,7 @@ module.exports = {
     reservationNotOnTuesday, 
     reservationNotInPast, 
     validateReservationTime, 
-    asyncErrorBoundary(create)] 
+    asyncErrorBoundary(create)], 
+  validateReservationId: [validateReservationId]
 };
 

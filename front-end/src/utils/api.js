@@ -87,5 +87,5 @@ export async function updateTablesList (reservation_id, tableId, signal) {
       signal,
     };
   
-    return await fetchJson(url, options, {});
+    return await fetchJson(url, options, []);
 }

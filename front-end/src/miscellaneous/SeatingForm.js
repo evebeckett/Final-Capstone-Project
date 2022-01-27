@@ -16,11 +16,12 @@ function SeatingForm({ tableList }) {
     const {reservation_id} = useParams()
   
 
-    async function handleSubmit(event){
+     function handleSubmit(event){
         event.preventDefault();
         const abortController = new AbortController();
+        setErrors(null)
       
-       updateTablesList({ "reservation_id": reservation_id}, tableId).then(history.push("/dashboard")).catch(setErrors)
+       updateTablesList({ "reservation_id": reservation_id}, tableId).then(() => history.push("/dashboard")).catch(setErrors)
                 
        return () => abortController.abort();
     }

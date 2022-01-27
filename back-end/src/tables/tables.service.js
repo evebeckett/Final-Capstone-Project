@@ -5,8 +5,8 @@ function list() {
     return knex("tables").select("*").orderBy("table_name")
 }
 
-function listSingleTable(reservationId) {
-    return knex("tables").select("*").where({"tables.reservation_id": reservationId}).first()
+function listSingleTable(tableId) {
+    return knex("tables").select("*").where({"tables.table_id": tableId}).first()
 }
 
 function create(newTable) {
