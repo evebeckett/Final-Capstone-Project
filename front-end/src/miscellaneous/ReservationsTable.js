@@ -1,8 +1,19 @@
 import React from "react";
 import uniqid from "uniqid";
+import {Link} from "react-router-dom"
+import {updateReservation} from "../utils/api"
 
 function ReservationsTable({ reservations }) {
   
+ async function updateReservationToSeated (reservation) {
+    try{
+      await updateReservation(reservation.status, reservation.id)
+    } catch(error) {
+      console.error(error);
+
+    }
+  }
+
   return (
     <table>
       <thead>
@@ -13,6 +24,7 @@ function ReservationsTable({ reservations }) {
           <th>People</th>
           <th>Reservation Time</th>
           <th>Reservation Date</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
@@ -25,13 +37,8 @@ function ReservationsTable({ reservations }) {
               <td key={uniqid()}>{reservation.people}</td>
               <td key={uniqid()}>{reservation.reservation_time}</td>
               <td key={uniqid()}>{reservation.reservation_date}</td>
-              <td key={uniqid()}>
-                <a href={`/reservations/${reservation.reservation_id}/seat`}>
-                <button >
-                  Seat
-                </button>
-                </a>
-              </td>
+              <td key={uniqid()} data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
+              {reservation.status === "booked" && <Link to={`/reservations/${reservation.reservation_id}/seat`}><button className="btn btn-primary mb-2" onClick={()=> updateReservationToSeated(reservation)}>Seat</button></Link>}
             </tr>
           );
         })}

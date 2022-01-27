@@ -1,7 +1,19 @@
 const knex = require("../db/connection");
 
+function updateStatus(reservationId, status){
+    return db("reservations")
+    .select("*")
+    .where({"reservation_id": reservationId})
+    .update({"status": status})
+    .returning("*");
+}
+
 function list(date) {
-    return knex("reservations").select("*").where({"reservation_date":date}).orderBy("reservation_time");
+    return knex("reservations")
+    .select("*")
+    .where({"reservation_date":date})
+    .where({"status": "booked"})
+    .orderBy("reservation_time");
 }
 
 function listSingleReservation(reservationId) {
@@ -16,4 +28,4 @@ function create(newReservation) {
     .then((createdRecords) => createdRecords[0])
 }
 
-module.exports={ list, listSingleReservation, create };
+module.exports={ list, listSingleReservation, create, updateStatus };

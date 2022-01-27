@@ -1,17 +1,22 @@
-import React, {useState} from "react";
+import React from "react";
 import uniqid from "uniqid";
+import { finishTable } from "../utils/api";
+import { useHistory } from "react-router-dom";
 
 function TablesTable({ tables }) {
+  const history = useHistory();
 
-  const [reservationId, setReservationId] = useState(null)
-
-  function availability (reservation_id) {
-    setReservationId(Number(reservation_id));
-    if (typeof reservationId === "number") {
-      return <p>Occupied</p>
-    } else {
-      return <p>Free</p>
+  async function finishHandler(table, tableId) {
+    const abortController = new AbortController();
+    if (
+      window.confirm(
+        "Is this table ready to seat new guests? This cannot be undone."
+      )
+    ) {
+      await finishTable(table, tableId);
+      history.go(0);
     }
+    return () => abortController.abort();
   }
 
   return (
@@ -29,7 +34,22 @@ function TablesTable({ tables }) {
             <tr key={uniqid()}>
               <td key={uniqid()}>{table.table_name}</td>
               <td key={uniqid()}>{table.capacity}</td>
-              <td key={uniqid()} data-table-id-status={table.table_id}> {table.reservation_id ? "occupied" : "free"}</td>
+              <td key={uniqid()} data-table-id-status={table.table_id}>
+                {" "}
+                {table.reservation_id ? "occupied" : "free"}
+              </td>
+              <td key={uniqid()}>
+                {table.reservation_id && (
+                  <button
+                    className="btn btn-primary mb-2"
+                    data-table-id-finish={table.table_id}
+                    type="button"
+                    onClick={() => finishHandler(table, table.table_id)}
+                  >
+                    Finish
+                  </button>
+                )}
+              </td>
             </tr>
           );
         })}

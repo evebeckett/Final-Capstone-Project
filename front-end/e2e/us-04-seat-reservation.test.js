@@ -193,7 +193,7 @@ describe("US-04 - Seat reservation - E2E", () => {
         path: ".screenshots/us-04-seat-reservation-submit-after.png",
         fullPage: true,
       });
-
+      console.log("=======>", page)
       expect(page.url()).toContain("/dashboard");
       expect(page).toMatch(/occupied/i);
     });

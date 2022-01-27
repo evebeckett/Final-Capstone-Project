@@ -22,4 +22,10 @@ function update(tableId, reservationId) {
     .update("reservation_id", Number(reservationId))
   }
 
-module.exports={ list, listSingleTable, create, update }
+  function destroy(tableId) {
+    return knex("tables")
+    .where("table_id", tableId)
+    .update("reservation_id", null)
+  }
+
+module.exports={ list, listSingleTable, create, update, destroy}

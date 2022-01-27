@@ -89,3 +89,27 @@ export async function updateTablesList (reservation_id, tableId, signal) {
   
     return await fetchJson(url, options, []);
 }
+
+
+export async function finishTable(table, tableId, signal){
+  const url = `${API_BASE_URL}/tables/${tableId}/seat`;
+  const options = {
+    method: "DELETE",
+    headers,
+    body: JSON.stringify({data: table}),
+    signal,
+  };
+  return await fetchJson(url, options, {});
+}
+
+export async function updateReservation(reservationStatus, reservationId, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservationId}/status`
+  
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: reservationStatus}),
+    signal,
+  };
+  return await fetchJson(url, options, {});
+}

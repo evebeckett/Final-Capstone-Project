@@ -8,7 +8,7 @@ function SeatingForm({ tableList }) {
 
     let history = useHistory();
     
-    const [tableId, setTableId] = useState();
+    const [tableId, setTableId] = useState(0);
   
     const [errors, setErrors] = useState(null);
 
@@ -38,6 +38,7 @@ function SeatingForm({ tableList }) {
       <div>
           <form onSubmit={handleSubmit}>
               <select
+              value={tableId}
               name="table_id" 
               onChange={handleChange}>
                   <option value={0}>Please Select</option>
@@ -47,7 +48,7 @@ function SeatingForm({ tableList }) {
                      )
                   }) }
               </select>
-              <button type="submit" className="btn-btn-primary">Submit</button>
+              <button type="submit" className="btn btn-primary">Submit</button>
               <button type="button" className="btn btn-primary" onClick={() => history.goBack()}>Cancel</button>
           </form>
           <ErrorAlert error={errors} />

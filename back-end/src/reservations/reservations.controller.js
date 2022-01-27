@@ -84,8 +84,7 @@ function reservationNotOnTuesday (req, res, next) {
   const { reservation_date, reservation_time } = req.body.data;
   
   let date = new Date(reservation_date + " " + reservation_time)
-  console.log(date)
-  console.log(date)
+ 
   let dayOfWeek = date.getDay()
 
   try {
@@ -149,6 +148,11 @@ function validateReservationTime (req, res, next) {
         }
     }
 
+    async function updateStatus(req, res, next){
+
+      const data = (await ReservationsService.updateStatus(Number(req.params.reservation_id), req.body.data.status))[0];
+      res.status(200).json({data})
+    }
 
 async function create (req, res, next) {
 
@@ -188,6 +192,7 @@ module.exports = {
     reservationNotInPast, 
     validateReservationTime, 
     asyncErrorBoundary(create)], 
-  validateReservationId: [validateReservationId]
+  validateReservationId: [validateReservationId],
+  updateStatus: [updateStatus]
 };
 
