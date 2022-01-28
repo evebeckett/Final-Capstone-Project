@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {useHistory} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
-import { fetchJson } from "../utils/api";
+import { createNewTable } from "../utils/api";
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
@@ -40,17 +40,8 @@ function TablesForm () {
         const abortController = new AbortController();
         event.preventDefault();
         setError(null);
-  
-     const url = `${API_BASE_URL}/tables`;
-     const options = {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({data: newTable}),
-      signal: abortController.signal,
-    };
-    
-   
-    fetchJson(url,options).then(() => history.push(`/dashboard`)).catch(setError)
+        createNewTable(newTable)
+        .then(() => history.push(`/dashboard`)).catch(setError)
     
     return () => abortController.abort();
 

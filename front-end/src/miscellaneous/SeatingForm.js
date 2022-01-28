@@ -19,17 +19,15 @@ function SeatingForm({ tableList }) {
     console.log(reservation_id)
     const abortController = new AbortController();
     setErrors(null);
-
-    // updateTablesListAndStatus({reservation_id: reservation_id, status: "seated"}, tableId)
-    updateTablesList({ reservation_id: reservation_id }, tableId)
-      .catch(setErrors) 
     
-    // updateToSeated({ status: "seated" }, tableId)
-    //   .then(() => history.push("/dashboard"))
-    //   .catch(setErrors);
-
+    updateToSeated({reservation_id: Number(reservation_id) }, Number(tableId), abortController.signal)
+    
+    .then(() => history.push("/dashboard"))
+    
+    .catch(setErrors);
+    
     return () => abortController.abort();
-
+    
   }
 
   function handleChange(event) {

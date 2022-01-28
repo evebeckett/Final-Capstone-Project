@@ -180,22 +180,25 @@ async function validateTableIdExists(req, res, next) {
   next();
 }
 
-async function updateToSeated(req, res, next) {
-  let tableId = req.params.table_id;
+// async function updateToSeated(req, res, next) {
+//   console.log(req.body.data, "<===========req.body.data")
+//   let reservationId = req.body.data.reservation_id;
   
-  try {
-    let table = await tablesService.listSingleTable(tableId)
-    let reservationId = table.reservation_id;
-    await reservationsService.updateStatus(reservationId, "seated");
-    res.status(200);
-  } 
-    catch (error) {
-    console.log(error);
-    error.status = 400;
-    error.message = "Unable to seat table.";
-    throw error;
-  }
-}
+//   let status = req.body.data.status;
+  
+//   try {
+    
+//     await reservationsService.updateStatus(reservationId, status);
+//     res.status(200);
+
+//   } 
+//     catch (error) {
+//     console.log(error);
+//     error.status = 400;
+//     error.message = "Unable to seat table.";
+//     throw error;
+//   }
+// }
 
 async function create(req, res, next) {
   tablesService
@@ -218,12 +221,18 @@ async function list(req, res, next) {
 }
 
 async function update(req, res, next) {
-  let { reservation_id } = req.body.data.reservation_id;
-  let { status } = req.body.data.status;
+  //update reservation to "seated"
+ 
+  let { reservation_id } = req.body.data;
   let tableId = req.params.table_id;
+  
+  
   try {
-    // const tablesData = await tablesService.update(tableId, reservation_id);
-    // const reservationData = await reservationsService
+
+    await reservationsService.updateStatus(reservation_id, "seated");
+
+    const data = await tablesService.update(tableId, reservation_id);
+
     res.status(200).json({ data });
   } catch (error) {
     console.log(error);
@@ -235,7 +244,6 @@ async function update(req, res, next) {
 
 async function destroy(req, res, next) {
   let tableId = req.params.table_id;
-  let table = req.body.data;
 
   const data = (await tablesService.destroy(tableId))[0];
   res.status(200).json({ data });
@@ -258,7 +266,7 @@ module.exports = {
     validateNotOccupied,
     asyncErrorBoundary(update),
   ],
-  updateToSeated: [updateToSeated],
+  // updateToSeated: [updateToSeated],
   destroy: [
     // validateTableId,
     // validateTableIdExists,

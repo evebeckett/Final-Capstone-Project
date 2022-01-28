@@ -185,6 +185,13 @@ function validateReservationTime(req, res, next) {
   }
 }
 
+async function listSingleReservation(req, res, next){
+  const reservationId = req.params.reservation_id;
+
+  let data = await reservationsService.listSingleReservation(reservationId)
+  res.json({data});
+}
+
 async function updateStatus(req, res, next) {
   const data = (
     await reservationsService.updateStatus(
@@ -245,4 +252,5 @@ module.exports = {
     // validateReservationId,
     updateStatus,
   ],
+  listSingleReservation: [asyncErrorBoundary(listSingleReservation)],
 };
