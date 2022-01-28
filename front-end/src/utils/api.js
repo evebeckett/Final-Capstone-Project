@@ -77,6 +77,19 @@ export async function listTables(params, signal) {
   
 }
 
+// export async function updateTablesListAndStatus(updatedInfo, tableId) (reservation_id, tableId, signal) {
+    
+//   const url = `${API_BASE_URL}/tables/${tableId}/seat`
+//   const options = {
+//     method: "PUT",
+//     headers, 
+//     body: JSON.stringify({data: updatedInfo}),
+//     signal,
+//   };
+
+//   return await fetchJson(url, options, []);
+// }
+
 export async function updateTablesList (reservation_id, tableId, signal) {
     
     const url = `${API_BASE_URL}/tables/${tableId}/seat`
@@ -102,7 +115,7 @@ export async function finishTable(table, tableId, signal){
   return await fetchJson(url, options, {});
 }
 
-export async function updateToSeated(reservationStatus, tableId, reservationId, signal) {
+export async function updateToSeated(reservationStatus, tableId, signal) {
   const url = `${API_BASE_URL}/tables/${tableId}/seat`
   
   const options = {

@@ -16,14 +16,20 @@ function SeatingForm({ tableList }) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    console.log(reservation_id)
     const abortController = new AbortController();
     setErrors(null);
+
+    // updateTablesListAndStatus({reservation_id: reservation_id, status: "seated"}, tableId)
     updateTablesList({ reservation_id: reservation_id }, tableId)
-      .then(() => updateToSeated({ status: "seated" }, tableId))
-      .then(() => history.push("/dashboard"))
-      .catch(setErrors);
+      .catch(setErrors) 
+    
+    // updateToSeated({ status: "seated" }, tableId)
+    //   .then(() => history.push("/dashboard"))
+    //   .catch(setErrors);
 
     return () => abortController.abort();
+
   }
 
   function handleChange(event) {
@@ -36,7 +42,7 @@ function SeatingForm({ tableList }) {
     <div>
       <form onSubmit={handleSubmit}>
         <select value={tableId} name="table_id" onChange={handleChange}>
-          <option value={0}>Please Select</option>
+          <option value={""}>Please Select</option>
           {tableList.map((table) => {
             return (
               <option value={table.table_id} key={uniqid()}>

@@ -31,11 +31,11 @@ function Routes() {
       <Route exact={true} path="/reservations">
         <Layout />
       </Route>
-      <Route exact={true} path="/reservations/new">
-        <Reservations />
-      </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <Seating />
+      </Route>
+      <Route exact={true} path="/reservations/new">
+        <Reservations />
       </Route>
       <Route exact={true} path="/tables/new">
         <Tables />

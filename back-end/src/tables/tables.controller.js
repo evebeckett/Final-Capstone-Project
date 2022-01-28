@@ -169,7 +169,7 @@ function validateTableId(req, res, next) {
 async function validateTableIdExists(req, res, next) {
   const { data = {} } = req.body;
 
-  res.locals.tableId = await tablesService.listSingleTable(data.table_id);
+  res.locals.tableId = await tablesService.listSingleTable(Number(data.table_id));
 
   if (!res.locals.tableId) {
     return next({
@@ -181,8 +181,11 @@ async function validateTableIdExists(req, res, next) {
 }
 
 async function updateToSeated(req, res, next) {
-  let reservationId = req.body.data.reservation_id;
+  let tableId = req.params.table_id;
+  
   try {
+    let table = await tablesService.listSingleTable(tableId)
+    let reservationId = table.reservation_id;
     await reservationsService.updateStatus(reservationId, "seated");
     res.status(200);
   } 
@@ -215,11 +218,12 @@ async function list(req, res, next) {
 }
 
 async function update(req, res, next) {
-  let { reservation_id } = req.body.data;
+  let { reservation_id } = req.body.data.reservation_id;
+  let { status } = req.body.data.status;
   let tableId = req.params.table_id;
   try {
-    const data = await tablesService.update(tableId, reservation_id);
-
+    // const tablesData = await tablesService.update(tableId, reservation_id);
+    // const reservationData = await reservationsService
     res.status(200).json({ data });
   } catch (error) {
     console.log(error);
@@ -256,8 +260,8 @@ module.exports = {
   ],
   updateToSeated: [updateToSeated],
   destroy: [
-    validateTableId,
-    validateTableIdExists,
+    // validateTableId,
+    // validateTableIdExists,
     validateTableIsOccupied,
     asyncErrorBoundary(destroy),
   ],

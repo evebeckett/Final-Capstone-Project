@@ -138,7 +138,7 @@ function validateStatus(req, res, next) {
   console.log(status, "status")
   try {
     if (
-      status !== "booked"
+      status === "seated" || status === "finished"
     ) {
       const error = new Error(
         "Status must be not be 'finished' or 'seated'"
