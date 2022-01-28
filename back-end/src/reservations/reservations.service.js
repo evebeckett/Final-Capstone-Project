@@ -1,7 +1,7 @@
 const knex = require("../db/connection");
 
 function updateStatus(reservationId, status){
-    return db("reservations")
+    return knex("reservations")
     .select("*")
     .where({"reservation_id": reservationId})
     .update({"status": status})
@@ -12,7 +12,7 @@ function list(date) {
     return knex("reservations")
     .select("*")
     .where({"reservation_date":date})
-    .where({"status": "booked"})
+    .whereNot({"status": "finished"})
     .orderBy("reservation_time");
 }
 

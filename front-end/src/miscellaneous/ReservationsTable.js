@@ -1,18 +1,9 @@
 import React from "react";
 import uniqid from "uniqid";
 import {Link} from "react-router-dom"
-import {updateReservation} from "../utils/api"
 
 function ReservationsTable({ reservations }) {
   
- async function updateReservationToSeated (reservation) {
-    try{
-      await updateReservation(reservation.status, reservation.id)
-    } catch(error) {
-      console.error(error);
-
-    }
-  }
 
   return (
     <table>
@@ -38,7 +29,7 @@ function ReservationsTable({ reservations }) {
               <td key={uniqid()}>{reservation.reservation_time}</td>
               <td key={uniqid()}>{reservation.reservation_date}</td>
               <td key={uniqid()} data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
-              {reservation.status === "booked" && <Link to={`/reservations/${reservation.reservation_id}/seat`}><button className="btn btn-primary mb-2" onClick={()=> updateReservationToSeated(reservation)}>Seat</button></Link>}
+              {reservation.status === "booked" && <Link to={`/reservations/${reservation.reservation_id}/seat`}><button className="btn btn-primary mb-2">Seat</button></Link>}
             </tr>
           );
         })}

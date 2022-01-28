@@ -1,6 +1,6 @@
 import React from "react";
 import uniqid from "uniqid";
-import { finishTable } from "../utils/api";
+import { finishTable, updateToFinished } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
 function TablesTable({ tables }) {
@@ -8,14 +8,20 @@ function TablesTable({ tables }) {
 
   async function finishHandler(table, tableId) {
     const abortController = new AbortController();
+    try {
     if (
       window.confirm(
         "Is this table ready to seat new guests? This cannot be undone."
       )
     ) {
       await finishTable(table, tableId);
+      await updateToFinished({status: "finished"}, table.reservation_id)
       history.go(0);
     }
+  } catch(error) {
+    console.error(error)
+    
+  }
     return () => abortController.abort();
   }
 
@@ -34,8 +40,7 @@ function TablesTable({ tables }) {
             <tr key={uniqid()}>
               <td key={uniqid()}>{table.table_name}</td>
               <td key={uniqid()}>{table.capacity}</td>
-              <td key={uniqid()} data-table-id-status={table.table_id}>
-                {" "}
+              <td key={uniqid()} data-table-id-status={`${table.table_id}`}>
                 {table.reservation_id ? "occupied" : "free"}
               </td>
               <td key={uniqid()}>

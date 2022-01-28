@@ -22,6 +22,7 @@ function update(tableId, reservationId) {
     .update("reservation_id", Number(reservationId))
   }
 
+
   function destroy(tableId) {
     return knex("tables")
     .where("table_id", tableId)
