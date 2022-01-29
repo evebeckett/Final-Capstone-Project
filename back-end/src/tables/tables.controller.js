@@ -144,15 +144,17 @@ async function validateTableIsOccupied(req, res, next) {
       status: 400,
       message: "not occupied",
     });
+ 
   }
+  res.status(200)
   next();
 }
 
 function validateTableId(req, res, next) {
-  const { data = {} } = req.body;
-
+  const tableId = req.params.table_id
+  console.log(req.params.table_id, "<++++++++++++++ req.params.table_id")
   try {
-    if (!data.table_id) {
+    if (!tableId) {
       const error = new Error("table_id is missing");
       error.status = 400;
       error.message = "table_id is missing";
@@ -167,11 +169,12 @@ function validateTableId(req, res, next) {
 }
 
 async function validateTableIdExists(req, res, next) {
-  const { data = {} } = req.body;
-
-  res.locals.tableId = await tablesService.listSingleTable(Number(data.table_id));
-
-  if (!res.locals.tableId) {
+ 
+console.log(await tablesService.listSingleTable(Number(req.params.table_id)))
+ const table = await tablesService.listSingleTable(Number(req.params.table_id));
+ const tableId = table.table_id;
+  console.log(tableId, "<========= TABLEID")
+  if (!tableId) {
     return next({
       status: 404,
       message: `table_id ${data.table_id} does not exist.`,
@@ -180,25 +183,25 @@ async function validateTableIdExists(req, res, next) {
   next();
 }
 
-// async function updateToSeated(req, res, next) {
-//   console.log(req.body.data, "<===========req.body.data")
-//   let reservationId = req.body.data.reservation_id;
-  
-//   let status = req.body.data.status;
-  
-//   try {
-    
-//     await reservationsService.updateStatus(reservationId, status);
-//     res.status(200);
-
-//   } 
-//     catch (error) {
-//     console.log(error);
-//     error.status = 400;
-//     error.message = "Unable to seat table.";
-//     throw error;
-//   }
-// }
+async function validateWhetherAlreadySeated (req, res, next) {
+  const reservationId = req.body.data.reservation_id;
+  console.log(reservationId, "<============ req.body.data.reservation_id (validateWhetherAlreadySeated")
+ try {
+   let reservation = await reservationsService.listSingleReservation(reservationId)
+   console.log(reservation.status, "<+++++++++ reservation.status")
+   if (reservation.status === "seated") {
+     return next({
+       status: 400,
+       message: `reservation is already seated`,
+     });
+   }} catch (error) {
+     console.log("error");
+     next(error);
+ 
+   }
+ 
+ }
+ 
 
 async function create(req, res, next) {
   tablesService
@@ -243,10 +246,12 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res, next) {
+  let reservationId = req.body.data.reservation_id;
+  
   let tableId = req.params.table_id;
-
-  const data = (await tablesService.destroy(tableId))[0];
-  res.status(200).json({ data });
+  await reservationsService.destroy(reservationId);
+  const tableData = await tablesService.destroy(tableId)
+  res.status(200).json({ tableData });
 }
 
 module.exports = {
@@ -262,14 +267,14 @@ module.exports = {
   update: [
     validateReservationId,
     validateReservationIdExists,
+    // validateWhetherAlreadySeated,
     validateSufficientTableCapacity,
     validateNotOccupied,
     asyncErrorBoundary(update),
   ],
-  // updateToSeated: [updateToSeated],
   destroy: [
-    // validateTableId,
-    // validateTableIdExists,
+    validateTableId,
+    validateTableIdExists,
     validateTableIsOccupied,
     asyncErrorBoundary(destroy),
   ],

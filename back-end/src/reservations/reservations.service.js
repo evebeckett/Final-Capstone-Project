@@ -28,4 +28,10 @@ function create(newReservation) {
     .then((createdRecords) => createdRecords[0])
 }
 
-module.exports={ list, listSingleReservation, create, updateStatus };
+function destroy(reservationId) {
+    return knex("reservations")
+    .where("reservation_id", reservationId)
+    .update("status", "finished")
+  }
+
+module.exports={ list, listSingleReservation, create, updateStatus, destroy };

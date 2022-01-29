@@ -38,7 +38,7 @@ function hasOnlyValidProperties(req, res, next) {
 
 function validatePeople(req, res, next) {
   const { data = {} } = req.body;
-  try {
+
     if (typeof data.people !== "number" || data.people <= 0) {
       const error = new Error("'People' must be a number.");
       error.status = 400;
@@ -47,9 +47,7 @@ function validatePeople(req, res, next) {
     }
 
     next();
-  } catch (error) {
-    next(error);
-  }
+
 }
 
 function validateDate(req, res, next) {
@@ -57,7 +55,6 @@ function validateDate(req, res, next) {
 
   const dateFormat = /\d\d\d\d-\d\d-\d\d/;
 
-  try {
     if (!dateFormat.test(reservation_date)) {
       const error = new Error("reservation_date must be in the proper format");
       error.status = 400;
@@ -65,16 +62,14 @@ function validateDate(req, res, next) {
       throw error;
     }
     next();
-  } catch (error) {
-    next(error);
-  }
+
 }
 
 function validateTime(req, res, next) {
   const { data = {} } = req.body;
   const timeFormat = /\d\d:\d\d/;
 
-  try {
+  
     if (!data.reservation_time.match(timeFormat)) {
       const error = new Error(
         "'reservation_time' must be in the proper format."
@@ -84,9 +79,6 @@ function validateTime(req, res, next) {
       throw error;
     }
     next();
-  } catch (error) {
-    next(error);
-  }
 }
 
 function reservationNotOnTuesday(req, res, next) {
@@ -96,7 +88,7 @@ function reservationNotOnTuesday(req, res, next) {
 
   let dayOfWeek = date.getDay();
 
-  try {
+  
     if (dayOfWeek === 2) {
       const error = new Error(
         "The restaurant is closed on Tuesdays. Please pick another date."
@@ -107,9 +99,7 @@ function reservationNotOnTuesday(req, res, next) {
       throw error;
     }
     next();
-  } catch (error) {
-    next(error);
-  }
+  
 }
 
 function reservationNotInPast(req, res, next) {
@@ -118,7 +108,7 @@ function reservationNotInPast(req, res, next) {
   let date = new Date(reservation_date + " " + reservation_time);
   let today = new Date();
 
-  try {
+  
     if (date.getTime() < today.getTime()) {
       const error = new Error("You cannot create reservations in the past.");
       error.status = 400;
@@ -127,16 +117,12 @@ function reservationNotInPast(req, res, next) {
       throw error;
     }
     next();
-  } catch (error) {
-    console.log("error");
-    next(error);
-  }
 }
 
 function validateStatus(req, res, next) {
   const {status} = req.body.data;
   console.log(status, "status")
-  try {
+  
     if (
       status === "seated" || status === "finished"
     ) {
@@ -150,11 +136,8 @@ function validateStatus(req, res, next) {
     }
     res.status(201)
     next();
-  } catch (error) {
-    console.log("error");
-    next(error);
-  }
-}
+  } 
+
 
 
 function validateReservationTime(req, res, next) {
@@ -192,7 +175,73 @@ async function listSingleReservation(req, res, next){
   res.json({data});
 }
 
+function validateExistenceOfStatus(req, res, next) {
+  const {status} = req.body.data;
+  console.log(status, "<+++++++++++++++req.body.data(status")
+  
+  
+    if (!status || status === "unknown") {
+      const error = new Error(
+        "Status is unknown."
+      );
+      error.status = 400;
+      error.message =
+        "Status is unknown.";
+      throw error;
+    }
+    res.status(201)
+    next();
+  } 
+
+async function validateStatusIsNotFinished(req, res, next) {
+  
+  const reservationId = req.params.reservation_id;
+  try {
+  const reservation = await reservationsService.listSingleReservation(reservationId)
+  console.log(reservation, "<==========reservation")
+  const status = reservation.status;
+  console.log(reservation.status, "<=======reservation.status")
+
+  if (status === "finished") {
+    const error = new Error(
+      "The status of 'finished' tables cannot be changed."
+    );
+    error.status = 400;
+    error.message =
+    "The status of 'finished' tables cannot be changed."
+    throw error;
+  }
+  res.status(201)
+  next();
+} catch (error) {
+  console.log("error")
+  next(error);
+}
+  
+}
+
+async function validateWhetherReservationExists (req, res, next) {
+  const reservationId = req.params.reservation_id;
+  console.log(reservationId, "<=======reservationId(validateWhetherReservationExists)")
+  try {
+    let reservation = await reservationsService.listSingleReservation(reservationId)
+    
+    if (!reservation) {
+      return next({
+        status: 400,
+        message: `reservation is already seated`,
+      });
+    }} catch (error) {
+      console.log("error");
+      next(error);
+  
+    }
+  
+}
+
+
 async function updateStatus(req, res, next) {
+ try {
   const data = (
     await reservationsService.updateStatus(
       Number(req.params.reservation_id),
@@ -200,6 +249,10 @@ async function updateStatus(req, res, next) {
     )
   )[0];
   res.status(200).json({ data });
+} catch (error) {
+  console.log("error");
+  next(error);
+}
 }
 
 async function create(req, res, next) {
@@ -211,15 +264,15 @@ async function create(req, res, next) {
 
 async function validateReservationId(req, res, next) {
   let reservationId = req.params.reservation_id;
-  console.log(reservationId, "reservationId")
-  let data = req.body.data.reservation_id
-  console.log(data, "data - validateReservationId");
-  if (data !== reservationId) {
+  
+  let data = await reservationsService.listSingleReservation(reservationId)
+  
+  if (!data) {
     res.status(200).json({ data });
   } else {
     return next({
       status: 404,
-      message: `table_id ${data.table_id} does not exist.`,
+      message: `reservation_id ${reservationId} does not exist.`,
     });
   }
   next();
@@ -249,8 +302,13 @@ module.exports = {
   ],
   // validateReservationId: [validateReservationId],
   updateStatus: [
+    validateExistenceOfStatus,
+    validateStatusIsNotFinished,
+    // validateWhetherReservationExists,
     // validateReservationId,
-    updateStatus,
+
+    // validateWhetherAlreadySeated,
+    asyncErrorBoundary(updateStatus),
   ],
   listSingleReservation: [asyncErrorBoundary(listSingleReservation)],
 };
