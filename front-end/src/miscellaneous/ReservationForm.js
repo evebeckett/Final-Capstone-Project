@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {useHistory} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { fetchJson } from "../utils/api";
@@ -6,28 +6,20 @@ import Edit from "../edit/Edit"
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
-function ReservationForm({handleSubmit, handleCancel, initialFormData={
-  first_name: "",
-  last_name: "",
-  mobile_number:"",
-  reservation_date:"",
-  reservation_time:"",
-  people:0,
-  status: "booked",
-} }) {
- 
+function ReservationForm() {
+  let initialFormData = {
+    first_name: "",
+    last_name: "",
+    mobile_number:"",
+    reservation_date:"",
+    reservation_time:"",
+    people:0,
+    status: "booked",
+  };
   const history = useHistory();
   const [newReservation, setNewReservation] = useState(initialFormData);
   const [reserveError, setReserveError] = useState(null);
-  const [reservationData, setReservationData] = useState(initialFormData);
 
-  function updateReservationData(){
-    if(initialFormData.reservation_id !== reservationData.reservation_id){
-      setReservationData({...initialFormData, reservation_date: initialFormData.reservation_date.substring(0,10)})
-    }
-}
-
-useEffect(updateReservationData, [initialFormData, reservationData.reservation_id]);
 function handleChange(event) {
   setNewReservation({
     ...newReservation,
@@ -55,7 +47,25 @@ function handlePhoneChange(event) {
 })
 }
 
-
+async function handleSubmit(event) {
+    const abortController = new AbortController();
+    event.preventDefault();
+    setReserveError(null);
+  
+     const url = `${API_BASE_URL}/reservations`;
+     const options = {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({data: newReservation}),
+      signal: abortController.signal,
+    };
+    let resDate = newReservation["reservation_date"];
+    
+   
+    fetchJson(url,options).then(() => history.push(`/dashboard?date=${resDate}`)).catch(setReserveError)
+    
+    return () => abortController.abort();
+  }
 
   
 
