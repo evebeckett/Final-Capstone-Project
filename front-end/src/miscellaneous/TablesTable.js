@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import uniqid from "uniqid";
-import { finishTable, updateToFinished } from "../utils/api";
+import { finishTable, updateStatus } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
 function TablesTable({ tables }) {
@@ -16,7 +16,7 @@ function TablesTable({ tables }) {
     ) {
     
       await finishTable(table, tableId)
-      .then(await updateToFinished({status: "finished"}, table.reservation_id))
+      .then(await updateStatus({status: "finished"}, table.reservation_id))
       .then(()=> history.go(0))
       .catch(setError)
  

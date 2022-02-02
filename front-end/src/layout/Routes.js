@@ -8,6 +8,8 @@ import Layout from "../layout/Layout.js";
 import useQuery from "../utils/useQuery";
 import Tables from "../tables/Tables";
 import Seating from "../seating/Seating";
+import Search from "../search/Search";
+import Edit from "../edit/Edit";
 
 
 /**
@@ -28,12 +30,18 @@ function Routes() {
       <Route exact={true} path="/">
         <Redirect to={"/dashboard"} />
       </Route>
+      <Route exact={true} path="/search">
+        <Search />
+      </Route>
       <Route exact={true} path="/reservations">
         <Layout />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <Seating />
       </Route>
+      <route exact={true} path="/reservations/9/edit">
+        <Edit />
+      </route>
       <Route exact={true} path="/reservations/new">
         <Reservations />
       </Route>

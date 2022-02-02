@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import {useHistory} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createNewTable } from "../utils/api";
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 
 function TablesForm () {
     

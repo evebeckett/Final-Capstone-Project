@@ -52,12 +52,6 @@ export async function fetchJson(url, options, onCancel) {
   }
 }
 
-/**
- * Retrieves all existing reservation.
- * @returns {Promise<[reservation]>}
- *  a promise that resolves to a possibly empty array of reservation saved in the database.
- */
-
 export async function listReservations(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
@@ -77,33 +71,38 @@ export async function listTables(params, signal) {
   
 }
 
-// export async function updateTablesListAndStatus(updatedInfo, tableId) (reservation_id, tableId, signal) {
-    
-//   const url = `${API_BASE_URL}/tables/${tableId}/seat`
-//   const options = {
-//     method: "PUT",
-//     headers, 
-//     body: JSON.stringify({data: updatedInfo}),
-//     signal,
-//   };
 
-//   return await fetchJson(url, options, []);
-// }
+export async function readReservation(reservationId, signal){
+  const url = `${API_BASE_URL}/reservations/${reservationId}`
+  const options = {
+    method: "GET",
+    headers,
+    signal
+  };
+  return await fetchJson(url, options, {});
+}
 
-// export async function updateTablesList (tableId, reservation_id,
-//    signal) {
-    
-//     const url = `${API_BASE_URL}/tables/${tableId}/seat`
-//     const options = {
-//       method: "PUT",
-//       headers, 
-//       body: JSON.stringify({data: reservation_id}),
-//       signal,
-//     };
+export async function createReservation(reservation, signal){
+  const url = `${API_BASE_URL}/reservations`
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({data : reservation}),
+    signal,
+  };
+  return await fetchJson(url, options, {});
   
-//     return await fetchJson(url, options, {});
-// }
+}
 
+export async function updateReservation(reservation, signal){
+  const url = `${API_BASE_URL}/reservations/${reservation.reservation_id}`
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: reservation})
+  };
+  return await fetchJson(url, options, {});
+}
 
 export async function finishTable(table, tableId, signal){
   const url = `${API_BASE_URL}/tables/${tableId}/seat`;
@@ -128,7 +127,7 @@ export async function updateToSeated(reservation_id, tableId, signal) {
   return await fetchJson(url, options, {})
 }
 
-export async function updateToFinished(reservationStatus, reservationId, signal) {
+export async function updateStatus (reservationStatus, reservationId, signal) {
   const url = `${API_BASE_URL}/reservations/${reservationId}/status`
   
   const options = {

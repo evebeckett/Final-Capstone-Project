@@ -279,12 +279,25 @@ async function validateReservationId(req, res, next) {
 }
 
 async function list(req, res, next) {
-  let { date } = req.query;
+  let data;
+  console.log(req.query.mobile_number, "mobile number")
+  if (req.query.date) {
+    data = await reservationsService.list(req.query.date)
+  } else if (req.query.mobile_number) {
+    
+    data = await reservationsService.search(req.query.mobile_number)
+    
+  } else {
+    data = [];
+  }
+  console.log(data);
+  res.json({
+    data:data,
 
-  let data = await reservationsService.list(date);
+  })
+  }
 
-  res.json({ data });
-}
+  
 
 module.exports = {
   list: asyncErrorBoundary(list),

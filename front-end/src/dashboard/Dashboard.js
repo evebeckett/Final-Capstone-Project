@@ -6,7 +6,7 @@ import ReservationsNavBtns from "../miscellaneous/ReservationsNavBtns";
 import TablesTable from "../miscellaneous/TablesTable";
 
 /**
- * Defines the dashboard page.
+ * Defines the dashboareplace(/[^0-9]/g, '')rd page.
  * @param date
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}

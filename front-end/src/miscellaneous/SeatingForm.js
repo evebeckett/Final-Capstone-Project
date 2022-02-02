@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { updateTablesList } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import uniqid from "uniqid";
 import { updateToSeated } from "../utils/api";

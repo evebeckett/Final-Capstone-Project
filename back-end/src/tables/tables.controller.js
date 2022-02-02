@@ -150,23 +150,6 @@ async function validateTableIsOccupied(req, res, next) {
   next();
 }
 
-function validateTableId(req, res, next) {
-  const tableId = req.params.table_id
-  console.log(req.params.table_id, "<++++++++++++++ req.params.table_id")
-  try {
-    if (!tableId) {
-      const error = new Error("table_id is missing");
-      error.status = 400;
-      error.message = "table_id is missing";
-      throw error;
-    }
-    res.status(200);
-    next();
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-}
 
 async function validateTableIdExists(req, res, next) {
  
@@ -273,8 +256,8 @@ module.exports = {
     asyncErrorBoundary(update),
   ],
   destroy: [
-    validateTableId,
-    validateTableIdExists,
+    
+    // validateTableIdExists,
     validateTableIsOccupied,
     asyncErrorBoundary(destroy),
   ],
