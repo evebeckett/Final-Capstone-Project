@@ -1,24 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {useHistory} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
-import { fetchJson } from "../utils/api";
-import Edit from "../edit/Edit"
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
-function ReservationForm() {
-  let initialFormData = {
+function ReservationForm({
+  handleSubmit,
+  handleCancel,
+  initialState = {
     first_name: "",
     last_name: "",
-    mobile_number:"",
-    reservation_date:"",
-    reservation_time:"",
-    people:0,
-    status: "booked",
-  };
+    mobile_number: "",
+    reservation_date: "",
+    reservation_time: "",
+    people: "0",
+  },
+}){
+
+  const [reservationData, setReservationData] = useState(initialState);
+  const [newReservation, setNewReservation] = useState();
+  const [reserveError, setReserveError] = useState();
   const history = useHistory();
-  const [newReservation, setNewReservation] = useState(initialFormData);
-  const [reserveError, setReserveError] = useState(null);
+
+  function updateReservationData(){
+      if(initialState.reservation_id !== reservationData.reservation_id){
+        setReservationData({...initialState, reservation_date: initialState.reservation_date.substring(0,10)})
+      }
+  }
+
+  useEffect(updateReservationData, [initialState, reservationData.reservation_id]);
+
 
 function handleChange(event) {
   setNewReservation({
@@ -47,32 +56,31 @@ function handlePhoneChange(event) {
 })
 }
 
-async function handleSubmit(event) {
-    const abortController = new AbortController();
-    event.preventDefault();
-    setReserveError(null);
+// async function handleSubmit(event) {
+//     const abortController = new AbortController();
+//     event.preventDefault();
+//     setReserveError(null);
   
-     const url = `${API_BASE_URL}/reservations`;
-     const options = {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({data: newReservation}),
-      signal: abortController.signal,
-    };
-    let resDate = newReservation["reservation_date"];
+//      const url = `${API_BASE_URL}/reservations`;
+//      const options = {
+//       method: "POST",
+//       headers: {"Content-Type": "application/json"},
+//       body: JSON.stringify({data: newReservation}),
+//       signal: abortController.signal,
+//     };
+//     let resDate = newReservation["reservation_date"];
     
    
-    fetchJson(url,options).then(() => history.push(`/dashboard?date=${resDate}`)).catch(setReserveError)
+  //   fetchJson(url,options).then(() => history.push(`/dashboard?date=${resDate}`)).catch(setReserveError)
     
-    return () => abortController.abort();
-  }
+  //   return () => abortController.abort();
+  // }
 
   
 
-  return (
-    <div>
-      
-      <form onSubmit={handleSubmit}>
+    return (
+      <div>
+        <form onSubmit={(event) => handleSubmit(event, reservationData)}>
         <div className="form-group col-md-6">
           <label htmlFor="firstName">First Name</label>
           <input
@@ -145,7 +153,7 @@ async function handleSubmit(event) {
         </div>
         
       </form>
-      <ErrorAlert error={reserveError} />
+      {/* <ErrorAlert error={reserveError} /> */}
     </div>
     
   
