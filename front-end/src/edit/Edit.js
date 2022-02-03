@@ -8,11 +8,13 @@ function Edit(){
     const [reservationErrors, setReservationErrors] = useState([]);
     const [reservation, setReservation] = useState();
     const {reservation_id} = useParams();
-    
+    console.log("HELLO FROM LOAD RESERVATION", reservation_id, history)
     function loadReservation() {
+       
         const abortController = new AbortController();
         setReservationErrors([]);
-        readReservation( Number(reservation_id), abortController.signal)
+       
+        readReservation(reservation_id, abortController.signal)
           .then(setReservation)
           .catch((errors)=>{
               console.error(errors)
@@ -45,12 +47,16 @@ function Edit(){
         }
         return () => abortController.abort();
       }
+      console.log(reservation, "reservation")
       return (
           
           <div>
-            { reservationErrors.length === 0 ? null : <ul >{reservationErrors.map((r) => (<li className="alert alert-danger" key={r}>{r}</li>))}</ul> }
+            {/* { reservationErrors.length === 0 ? null : <ul >{reservationErrors.map((r) => (<li className="alert alert-danger" key={r}>{r}</li>))}</ul> } */}
             <h1>Edit a reservation</h1>
-            <ReservationForm handleSubmit={handleSubmit} initialState={reservation} handleCancel={handleCancel}/>
+            <ReservationForm 
+            handleSubmit={handleSubmit} 
+            initialState={reservation} 
+            handleCancel={handleCancel}/>
           </div>
       )
 }

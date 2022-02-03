@@ -43,4 +43,13 @@ function search(mobile_number) {
          )
          .orderBy("reservation_date");
      }
-module.exports={ list, listSingleReservation, create, updateStatus, destroy, search };
+
+     function update(reservationId, reservation){
+        return knex("reservations")
+        .select("*")
+        .where({"reservation_id": reservationId})
+        .update(reservation)
+        .returning("*");
+    }
+
+module.exports={ list, listSingleReservation, create, updateStatus, destroy, search, update };

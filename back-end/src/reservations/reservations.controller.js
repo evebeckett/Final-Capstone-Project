@@ -1,14 +1,15 @@
 const reservationsService = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
-const hasRequiredProperties = hasProperties(
+const items = [
   "first_name",
   "last_name",
   "mobile_number",
   "reservation_date",
   "reservation_time",
   "people"
-);
+]
+const hasRequiredProperties = hasProperties(items);
 
 const VALID_PROPERTIES = [
   "first_name",
@@ -169,10 +170,13 @@ function validateReservationTime(req, res, next) {
 }
 
 async function listSingleReservation(req, res, next){
+  console.log(req.params.reservation_id, "req.params.reservation_id")
   const reservationId = req.params.reservation_id;
-
-  let data = await reservationsService.listSingleReservation(reservationId)
+  console.log(reservationId, "reservationId")
+  let data = await reservationsService.listSingleReservation(Number(reservationId))
+  console.log(data, "data");
   res.json({data});
+
 }
 
 function validateExistenceOfStatus(req, res, next) {
@@ -265,7 +269,7 @@ async function create(req, res, next) {
 async function validateReservationId(req, res, next) {
   let reservationId = req.params.reservation_id;
   
-  let data = await reservationsService.listSingleReservation(reservationId)
+  let data = await reservationsService.listSingleReservation(Number(reservationId))
   
   if (!data) {
     res.status(200).json({ data });
@@ -296,7 +300,10 @@ async function list(req, res, next) {
 
   })
   }
-
+  async function update(req, res, next){
+    const data = (await service.update(Number(req.params.reservation_id), req.body.data))[0];
+    res.status(200).json({data})
+  }
   
 
 module.exports = {
@@ -313,15 +320,21 @@ module.exports = {
     validateReservationTime,
     asyncErrorBoundary(create),
   ],
-  // validateReservationId: [validateReservationId],
+ 
   updateStatus: [
     validateExistenceOfStatus,
     validateStatusIsNotFinished,
     // validateWhetherReservationExists,
-    // validateReservationId,
+    validateReservationId,
 
     // validateWhetherAlreadySeated,
     asyncErrorBoundary(updateStatus),
   ],
-  listSingleReservation: [asyncErrorBoundary(listSingleReservation)],
+  listSingleReservation: 
+   [ 
+     hasOnlyValidProperties, 
+    //  hasRequiredProperties,
+   [asyncErrorBoundary(listSingleReservation)]],
+  update: 
+    [update],
 };

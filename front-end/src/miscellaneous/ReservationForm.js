@@ -16,7 +16,6 @@ function ReservationForm({
 }){
 
   const [reservationData, setReservationData] = useState(initialState);
-  const [newReservation, setNewReservation] = useState();
   const [reserveError, setReserveError] = useState();
   const history = useHistory();
 
@@ -30,17 +29,18 @@ function ReservationForm({
 
 
 function handleChange(event) {
-  setNewReservation({
-    ...newReservation,
-
+  
+  setReservationData({
+    ...reservationData,
+    
     // Trimming any whitespace
     [event.target.name]: event.target.value.trim()
   });
 }
 
 function handleNumberChange(event) {
-  setNewReservation({
-    ...newReservation,
+  setReservationData({
+    ...reservationData,
 
     // Trimming any whitespace
     [event.target.name]: parseInt(event.target.value.trim())
@@ -49,8 +49,8 @@ function handleNumberChange(event) {
 
 function handlePhoneChange(event) {
 
-  setNewReservation({
-    ...newReservation,
+  setReservationData({
+    ...reservationData,
 
     [event.target.name]: event.target.value.replace(/[^0-9]/g, '').trim()
 })
@@ -147,9 +147,13 @@ function handlePhoneChange(event) {
           <button type="submit" className="btn btn-primary">
             Submit
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => history.goBack()}>
-            Cancel
-          </button>
+          <button
+              type="cancel"
+              className="btn btn-danger mb-2"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
         </div>
         
       </form>

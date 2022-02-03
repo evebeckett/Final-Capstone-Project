@@ -1,4 +1,26 @@
 .side-bar {
-  background-color: #393a44;
+  background-color: #026873;
+  color:black;
   min-width: 200px;
 }
+
+body {
+background-color: #101A26;
+color: #35F2DF
+}
+
+.btn {
+  background-color: #2abfbf;
+  border-color: #026873;
+  color: #101A26;
+  border-radius: 8px;
+  transition-duration: 0.4s;
+  
+}
+
+.btn:hover, .btn:active, .btn:focus, .btn:visited {
+  background-color: #026873;
+  color: #2abfbf;
+  border-color: #35F2DF;
+}
+
