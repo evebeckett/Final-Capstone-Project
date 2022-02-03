@@ -6,9 +6,9 @@ import React, { useState, useEffect} from "react";
 function Edit(){
     const history = useHistory();
     const [reservationErrors, setReservationErrors] = useState([]);
-    const [reservation, setReservation] = useState();
+    const [reservation, setReservation] = useState({});
     const {reservation_id} = useParams();
-    console.log("HELLO FROM LOAD RESERVATION", reservation_id, history)
+    
     function loadReservation() {
        
         const abortController = new AbortController();
@@ -47,11 +47,11 @@ function Edit(){
         }
         return () => abortController.abort();
       }
-      console.log(reservation, "reservation")
+      
       return (
           
           <div>
-            {/* { reservationErrors.length === 0 ? null : <ul >{reservationErrors.map((r) => (<li className="alert alert-danger" key={r}>{r}</li>))}</ul> } */}
+            
             <h1>Edit a reservation</h1>
             <ReservationForm 
             handleSubmit={handleSubmit} 

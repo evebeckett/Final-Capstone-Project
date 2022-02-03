@@ -15,7 +15,7 @@ function SeatingForm({ tableList }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(reservation_id)
+   
     const abortController = new AbortController();
     setErrors(null);
     

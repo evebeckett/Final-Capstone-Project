@@ -153,10 +153,10 @@ async function validateTableIsOccupied(req, res, next) {
 
 async function validateTableIdExists(req, res, next) {
  
-console.log(await tablesService.listSingleTable(Number(req.params.table_id)))
+
  const table = await tablesService.listSingleTable(Number(req.params.table_id));
  const tableId = table.table_id;
-  console.log(tableId, "<========= TABLEID")
+  
   if (!tableId) {
     return next({
       status: 404,
@@ -168,10 +168,10 @@ console.log(await tablesService.listSingleTable(Number(req.params.table_id)))
 
 async function validateWhetherAlreadySeated (req, res, next) {
   const reservationId = req.body.data.reservation_id;
-  console.log(reservationId, "<============ req.body.data.reservation_id (validateWhetherAlreadySeated")
+  
  try {
    let reservation = await reservationsService.listSingleReservation(reservationId)
-   console.log(reservation.status, "<+++++++++ reservation.status")
+   
    if (reservation.status === "seated") {
      return next({
        status: 400,

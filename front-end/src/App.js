@@ -8,11 +8,13 @@ import Layout from "./layout/Layout";
  */
 function App() {
   return (
+    <div id="app">
     <Switch>
       <Route path="/">
         <Layout />
       </Route>
     </Switch>
+    </div>
   );
 }
 
