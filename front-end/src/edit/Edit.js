@@ -2,30 +2,32 @@ import ReservationForm from "../miscellaneous/ReservationForm";
 import { useHistory, useParams} from "react-router-dom";
 import {readReservation, updateReservation} from "../utils/api";
 import React, { useState, useEffect} from "react";
+import ErrorAlert from "../layout/ErrorAlert";
+import {formatAsDate} from "../utils/date-time"
 
 function Edit(){
     const history = useHistory();
-    const [reservationErrors, setReservationErrors] = useState([]);
-    const [reservation, setReservation] = useState({});
+    const [reservationErrors, setReservationErrors] = useState(null);
+    const [reservation, setReservation] = useState(null);
     const {reservation_id} = useParams();
     
     function loadReservation() {
        
         const abortController = new AbortController();
-        setReservationErrors([]);
+        setReservationErrors(null);
        
         readReservation(reservation_id, abortController.signal)
           .then(setReservation)
-          .catch((errors)=>{
-              console.error(errors)
-              setReservationErrors([errors])
+          .catch((error)=>{
+              console.error(error)
+              setReservationErrors(error)
         })
         return () => abortController.abort();
       }
 
-    useEffect((loadReservation), [reservation_id]);
+    useEffect(loadReservation, [reservation_id]);
 
-    function handleCancel(event) {
+    function handleCancel() {
         history.go(1);
       }
 
@@ -41,24 +43,28 @@ function Edit(){
     
           history.push(`/dashboard?date=${resDate}`);
         } catch (error) {
-          console.error(error);
-          setReservationErrors([error.message]);
+          setReservationErrors(error);
           return;
         }
         return () => abortController.abort();
       }
-      
+       if (reservation) {
+           reservation.reservation_date = formatAsDate(reservation.reservation_date)
+       }
       return (
           
           <div>
             
             <h1>Edit a reservation</h1>
-            <ReservationForm 
+            {reservation && <ReservationForm 
+
             handleSubmit={handleSubmit} 
             initialState={reservation} 
-            handleCancel={handleCancel}/>
+            handleCancel={handleCancel}/>}
+             <ErrorAlert error={reservationErrors} />
           </div>
       )
+     
 }
 
 export default Edit;

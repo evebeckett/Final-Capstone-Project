@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import uniqid from "uniqid";
 import { finishTable, updateStatus } from "../utils/api";
 import { useHistory } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert"
 
 function TablesTable({ tables }) {
   const history = useHistory();
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   async function finishHandler(table, tableId) {
     const abortController = new AbortController();
   
@@ -26,7 +27,8 @@ function TablesTable({ tables }) {
   }
 
   return (
-    <table>
+    <div>
+    <table className="tables">
       <thead>
         <tr>
           <th>Table Name</th>
@@ -35,15 +37,15 @@ function TablesTable({ tables }) {
         </tr>
       </thead>
       <tbody>
-        {tables.map((table) => {
+        {tables?.map((table) => {
           return (
             <tr key={uniqid()}>
-              <td key={uniqid()}>{table.table_name}</td>
-              <td key={uniqid()}>{table.capacity}</td>
-              <td key={uniqid()} data-table-id-status={`${table.table_id}`}>
+              <td>{table.table_name}</td>
+              <td>{table.capacity}</td>
+              <td data-table-id-status={table.table_id}>
                 {table.reservation_id ? "occupied" : "free"}
               </td>
-              <td key={uniqid()}>
+              <td>
                 {table.reservation_id && (
                   <button
                     className="btn btn-primary mb-2"
@@ -60,6 +62,8 @@ function TablesTable({ tables }) {
         })}
       </tbody>
     </table>
+    <ErrorAlert error={error} />
+    </div>
   );
 }
 

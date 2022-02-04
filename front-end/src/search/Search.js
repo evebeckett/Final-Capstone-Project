@@ -19,7 +19,6 @@ function Search() {
     <main>
       <h1>Search by Phone</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for PHONE</h4>
       </div>
       
       

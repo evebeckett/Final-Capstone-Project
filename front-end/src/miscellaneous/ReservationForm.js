@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {useHistory} from "react-router-dom";
-import ErrorAlert from "../layout/ErrorAlert";
+import React, { useState } from "react";
+
 
 function ReservationForm({
   handleSubmit,
@@ -11,23 +10,12 @@ function ReservationForm({
     mobile_number: "",
     reservation_date: "",
     reservation_time: "",
-    people: "0",
+    people: "1",
   },
 }){
 
   const [reservationData, setReservationData] = useState(initialState);
-  const [reserveError, setReserveError] = useState();
-  const history = useHistory();
-
-  function updateReservationData(){
-      
-      if(initialState.reservation_id !== reservationData.reservation_id) {
-      setReservationData({...initialState, reservation_date:initialState.reservation_date.substring(0,10)} )
-    }
-  }
-
-  useEffect(updateReservationData, [initialState]);
-
+ 
 
 function handleChange(event) {
   
@@ -44,7 +32,7 @@ function handleNumberChange(event) {
     ...reservationData,
 
     // Trimming any whitespace
-    [event.target.name]: parseInt(event.target.value.trim())
+    [event.target.name]: Number(event.target.value.trim())
   });
 }
 
@@ -62,7 +50,7 @@ function handlePhoneChange(event) {
       <div>
         <form onSubmit={(event) => handleSubmit(event, reservationData)}>
         <div className="form-group col-md-6">
-          <label htmlFor="firstName">First Name</label>
+          <label htmlFor="firstName">First Name:</label>
           <input
             type="text"
             name="first_name"
@@ -73,7 +61,7 @@ function handlePhoneChange(event) {
           ></input>
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="lastName">Last Name</label>
+          <label htmlFor="lastName">Last Name:</label>
           <input
             type="text"
             name="last_name"
@@ -85,7 +73,7 @@ function handlePhoneChange(event) {
         </div>
 
         <div className="form-group col-md-6">
-          <label htmlFor="reservationDate">Reservation Date</label>
+          <label htmlFor="reservationDate">Reservation Date:</label>
           <input
             type="date"
             name="reservation_date"
@@ -96,7 +84,7 @@ function handlePhoneChange(event) {
           ></input>
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="reservationTime">Reservation Time</label>
+          <label htmlFor="reservationTime">Reservation Time:</label>
           <input
             type="time"
             name="reservation_time"
@@ -108,7 +96,7 @@ function handlePhoneChange(event) {
         </div>
 
         <div className="form-group col-md-6">
-          <label htmlFor="mobileNumber">Mobile Number</label>
+          <label htmlFor="mobileNumber">Mobile Number:</label>
           <input
             type="text"
             name="mobile_number"
@@ -119,7 +107,7 @@ function handlePhoneChange(event) {
           ></input>
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="numberOfPeople">Number of People</label>
+          <label htmlFor="numberOfPeople">Number of People:</label>
           <input type="number" 
           min="1" 
           name="people" 
@@ -143,7 +131,8 @@ function handlePhoneChange(event) {
         </div>
         
       </form>
-      {/* <ErrorAlert error={reserveError} /> */}
+      
+    
     </div>
     
   

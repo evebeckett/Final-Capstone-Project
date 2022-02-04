@@ -39,7 +39,7 @@ function SearchForm({setReservationsByPhone}) {
   
 
   return (
-    <div>
+    <div>  
       <form onSubmit={handleFind}>
       <div className="form-group col-md-6">
           <label htmlFor="searchByPhone">Search by Phone </label>

@@ -24,3 +24,24 @@ color: #35F2DF
   border-color: #35F2DF;
 }
 
+.tables td, .tables th {
+  font-size: 16px;
+  padding: 5px;
+}
+
+.resBtns {
+  margin: 3px;
+}
+.resBtn {
+  padding: 3px;
+  margin: 3px;
+  border-radius: 8px;
+}
+
+#cancelBtn{
+  margin:3px;
+  padding:2px;
+}
+@media all and (min-width: 420px) {
+  
+}

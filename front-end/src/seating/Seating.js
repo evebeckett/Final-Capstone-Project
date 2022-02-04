@@ -8,7 +8,7 @@ function Seating() {
     
     const [ tableList, setTableList ] = useState([])
     const [ tableListError, setTableListError] = useState(null)
-    useEffect(loadSeating);
+    useEffect(loadSeating, []);
     
 
     function loadSeating() {

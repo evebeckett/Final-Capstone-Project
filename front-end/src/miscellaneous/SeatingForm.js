@@ -37,6 +37,7 @@ function SeatingForm({ tableList }) {
 
   return (
     <div>
+      <h1>Choose a Table</h1>
       <form onSubmit={handleSubmit}>
         <select value={tableId} name="table_id" onChange={handleChange}>
           <option value={""}>Please Select</option>
