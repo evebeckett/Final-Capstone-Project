@@ -1,15 +1,13 @@
 const reservationsService = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
-const items = [
-  "first_name",
-  "last_name",
-  "mobile_number",
-  "reservation_date",
-  "reservation_time",
-  "people",
-];
-const hasRequiredProperties = hasProperties(items);
+
+const hasRequiredProperties = hasProperties("first_name",
+"last_name",
+"mobile_number",
+"reservation_date",
+"reservation_time",
+"people");
 
 const VALID_PROPERTIES = [
   "first_name",
@@ -153,7 +151,6 @@ function reservationNotInPast(req, res, next) {
 
 function validateStatus(req, res, next) {
   const { status } = req.body.data;
-  console.log(status, "status");
 
   if (status === "seated" || status === "finished") {
     const error = new Error("Status must be not be 'finished' or 'seated'");
@@ -188,48 +185,40 @@ function validateReservationTime(req, res, next) {
     }
     next();
   } catch (error) {
-    console.log("error");
     next(error);
   }
 }
 
 function validateExistenceOfStatus(req, res, next) {
+  
   const { status } = req.body.data;
-
-  if (!status || status === "unknown") {
-    const error = new Error("Status is unknown.");
+  const validStatuses = ["booked", "seated", "finished", "cancelled"]
+  if (!status || !validStatuses.includes(status)) {
+    const error = new Error(`${status} is not a valid status or is unknown.`);
     error.status = 400;
-    error.message = "Status is unknown.";
+    // error.message = "Status is unknown.";
     throw error;
   }
   res.status(201);
   next();
 }
 
-async function validateStatusIsNotFinished(req, res, next) {
-  const reservationId = Number(req.params.reservation_id);
-  try {
-    const reservation = await reservationsService.listSingleReservation(
-      reservationId
-    );
-
-    const status = reservation.status;
+function validateStatusIsNotFinished(req, res, next) {
+  
+    const {status} = res.locals.reservation;
 
     if (status === "finished") {
       const error = new Error(
         "The status of 'finished' tables cannot be changed."
       );
       error.status = 400;
-      error.message = "The status of 'finished' tables cannot be changed.";
       throw error;
     }
-    res.status(201);
+    
     next();
-  } catch (error) {
-    console.log("error");
-    next(error);
-  }
 }
+
+
 
 async function validateWhetherReservationExists(req, res, next) {
   const reservationId = req.params.reservation_id;
@@ -246,7 +235,6 @@ async function validateWhetherReservationExists(req, res, next) {
     }
     next();
   } catch (error) {
-    console.log("error");
     next(error);
   }
 }
@@ -254,11 +242,11 @@ async function validateWhetherReservationExists(req, res, next) {
 async function validateReservationId(req, res, next) {
   let reservationId = req.params.reservation_id;
   try {
-    let data = await reservationsService.listSingleReservation(
-      Number(reservationId)
+    res.locals.reservation = await reservationsService.listSingleReservation(
+      reservationId
     );
 
-    if (!data) {
+    if (!res.locals.reservation) {
      
       return next({
         status: 404,
@@ -267,7 +255,6 @@ async function validateReservationId(req, res, next) {
     }
     next();
   } catch (error) {
-    console.log("error");
     next(error);
   }
 }
@@ -283,7 +270,6 @@ async function updateStatus(req, res, next) {
     );
     res.status(200).json({ data });
   } catch (error) {
-    console.log("error");
     next(error);
   }
 }
@@ -306,7 +292,6 @@ async function list(req, res, next) {
   } else {
     data = [];
   }
-  console.log(data);
   res.json({
     data: data,
   });
@@ -326,7 +311,7 @@ async function listSingleReservation(req, res, next) {
   res.json({ data });
 }
 module.exports = {
-  list: asyncErrorBoundary(list),
+  list:  [asyncErrorBoundary(list)],
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,
@@ -337,21 +322,18 @@ module.exports = {
     reservationNotOnTuesday,
     reservationNotInPast,
     validateReservationTime,
-    validateReservationId,
     asyncErrorBoundary(create),
   ],
 
   updateStatus: [
+    asyncErrorBoundary(validateReservationId),
     validateExistenceOfStatus,
     validateStatusIsNotFinished,
-    // validateWhetherReservationExists,
-    validateReservationId,
-
-    // validateWhetherAlreadySeated,
     asyncErrorBoundary(updateStatus),
   ],
   listSingleReservation: [
     hasOnlyValidProperties,
+    asyncErrorBoundary(validateReservationId),
     [asyncErrorBoundary(listSingleReservation)],
   ],
   update: [
@@ -361,7 +343,9 @@ module.exports = {
     validatePeople, 
     validateDate, 
     validateTime,
-    // listSingleReservation, 
-    validateWhetherReservationExists,
+    reservationNotOnTuesday,
+    reservationNotInPast,
+    validateReservationTime,
+    asyncErrorBoundary(validateWhetherReservationExists),
     asyncErrorBoundary(update)],
 };

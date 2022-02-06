@@ -59,7 +59,7 @@ function validateTableName(req, res, next) {
 async function validateNotOccupied(req, res, next) {
   const { data = {} } = req.body;
   let tableId = req.params.table_id;
-
+try {
   let table = await tablesService.listSingleTable(tableId);
 
   if (table.reservation_id) {
@@ -67,8 +67,30 @@ async function validateNotOccupied(req, res, next) {
       status: 400,
       message: "occupied",
     });
-  }
+  } 
   next();
+} catch(error) {
+  next(error)
+}
+}
+
+async function validateTableIsOccupied(req, res, next) {
+  
+  let tableId = req.params.table_id;
+try {
+  let table = await tablesService.listSingleTable(tableId);
+
+  if (!table.reservation_id) {
+    return next({
+      status: 400,
+      message: "table_id is not occupied",
+    });
+  } 
+  res.status(200)
+  next();
+} catch(error) {
+  next(error)
+}
 }
 
 function validateReservationId(req, res, next) {
@@ -83,7 +105,6 @@ function validateReservationId(req, res, next) {
     res.status(200);
     next();
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -128,42 +149,44 @@ async function validateSufficientTableCapacity(req, res, next) {
       next();
     }
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
 
-async function validateTableIsOccupied(req, res, next) {
-  const { data = {} } = req.body;
-  let tableId = req.params.table_id;
+// async function validateTableIsOccupied(req, res, next) {
+//   const { data = {} } = req.body;
+//   let tableId = req.params.table_id;
 
-  let table = await tablesService.listSingleTable(tableId);
+//   let table = await tablesService.listSingleTable(tableId);
 
-  if (!table.reservation_id) {
-    return next({
-      status: 400,
-      message: "not occupied",
-    });
+//   if (!table.reservation_id) {
+//     return next({
+//       status: 400,
+//       message: "not occupied",
+//     });
  
-  }
-  res.status(200)
-  next();
-}
+//   }
+//   res.status(200)
+//   next();
+// }
+
 
 
 async function validateTableIdExists(req, res, next) {
  
-
- const table = await tablesService.listSingleTable(Number(req.params.table_id));
- const tableId = table.table_id;
+try {
+ res.locals.table = await tablesService.listSingleTable(Number(req.params.table_id));
   
-  if (!tableId) {
+  if (!res.locals.table) {
     return next({
       status: 404,
-      message: `table_id ${data.table_id} does not exist.`,
+      message: `table_id ${req.params.table_id} does not exist.`,
     });
   }
   next();
+}catch (error) {
+  next(error);
+}
 }
 
 async function validateWhetherAlreadySeated (req, res, next) {
@@ -177,8 +200,10 @@ async function validateWhetherAlreadySeated (req, res, next) {
        status: 400,
        message: `reservation is already seated`,
      });
-   }} catch (error) {
-     console.log("error");
+     
+   }
+   next();
+  } catch (error) {
      next(error);
  
    }
@@ -199,7 +224,6 @@ async function list(req, res, next) {
 
     res.json({ data });
   } catch (error) {
-    console.log(error);
     error.status = 400;
     error.message = "table info was unable to render";
     throw error;
@@ -221,7 +245,6 @@ async function update(req, res, next) {
 
     res.status(200).json({ data });
   } catch (error) {
-    console.log(error);
     error.status = 400;
     error.message = "table info was unable to update";
     throw error;
@@ -229,7 +252,8 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res, next) {
-  let reservationId = req.body.data.reservation_id;
+  
+  let reservationId = res.locals.table.reservation_id
   
   let tableId = req.params.table_id;
   await reservationsService.destroy(reservationId);
@@ -249,16 +273,16 @@ module.exports = {
 
   update: [
     validateReservationId,
-    validateReservationIdExists,
-    // validateWhetherAlreadySeated,
-    validateSufficientTableCapacity,
-    validateNotOccupied,
+    asyncErrorBoundary(validateReservationIdExists),
+    asyncErrorBoundary(validateWhetherAlreadySeated),
+    asyncErrorBoundary(validateSufficientTableCapacity),
+    asyncErrorBoundary(validateNotOccupied),
     asyncErrorBoundary(update),
   ],
   destroy: [
     
-    // validateTableIdExists,
-    validateTableIsOccupied,
+    asyncErrorBoundary(validateTableIdExists),
+    asyncErrorBoundary(validateTableIsOccupied),
     asyncErrorBoundary(destroy),
   ],
 };
