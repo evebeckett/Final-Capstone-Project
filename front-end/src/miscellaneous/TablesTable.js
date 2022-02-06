@@ -31,18 +31,18 @@ function TablesTable({ tables }) {
     <table className="tables">
       <thead>
         <tr>
-          <th>Table Name</th>
-          <th>Capacity</th>
-          <th>Availability</th>
+          <th className="tableCol">Table Name</th>
+          <th className="tableCol">Capacity</th>
+          <th className="tableCol">Availability</th>
         </tr>
       </thead>
       <tbody>
         {tables?.map((table) => {
           return (
             <tr key={uniqid()}>
-              <td>{table.table_name}</td>
-              <td>{table.capacity}</td>
-              <td data-table-id-status={table.table_id}>
+              <td className="tableCol">{table.table_name}</td>
+              <td className="tableCol">{table.capacity}</td>
+              <td className="tableCol" data-table-id-status={table.table_id}>
                 {table.reservation_id ? "occupied" : "free"}
               </td>
               <td>

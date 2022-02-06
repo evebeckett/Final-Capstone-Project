@@ -19,7 +19,6 @@ function Edit(){
         readReservation(reservation_id, abortController.signal)
           .then(setReservation)
           .catch((error)=>{
-              console.error(error)
               setReservationErrors(error)
         })
         return () => abortController.abort();

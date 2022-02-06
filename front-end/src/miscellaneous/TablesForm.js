@@ -51,7 +51,7 @@ function TablesForm () {
       
       <form onSubmit={handleSubmit}>
         <div className="form-group col-md-6">
-          <label htmlFor="tableName">Table Name</label>
+          <label htmlFor="tableName">Table Name:</label>
           <input
             type="text"
             name="table_name"
@@ -61,7 +61,7 @@ function TablesForm () {
           ></input>
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="capacity">Capacity</label>
+          <label htmlFor="capacity">Capacity:</label>
           <input
             type="number"
             name="capacity"

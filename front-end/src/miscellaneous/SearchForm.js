@@ -42,7 +42,7 @@ function SearchForm({setReservationsByPhone}) {
     <div>  
       <form onSubmit={handleFind}>
       <div className="form-group col-md-6">
-          <label htmlFor="searchByPhone">Search by Phone </label>
+          <label htmlFor="searchByPhone">Search by Phone: </label>
           <input
             type="text"
             name="mobile_number"

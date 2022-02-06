@@ -33,26 +33,27 @@ function ReservationsTable({ reservations }) {
       <table className="col-xs-8 col-md-9 tables">
         <thead>
           <tr>
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>Mobile Number</th>
-            <th>People</th>
-            <th>Reservation Time</th>
-            <th>Reservation Date</th>
-            <th>Status</th>
+            <th className="tableCol">Last Name</th>
+            <th className="tableCol">First Name</th>
+            <th className="tableCol">Mobile Number</th>
+            <th className="tableCol">People</th>
+            <th className="tableCol">Reservation Time</th>
+            <th className="tableCol">Reservation Date</th>
+            <th className="tableCol">Status</th>
+            
           </tr>
         </thead>
         <tbody>
           {reservations.map((reservation) => {
             return (
               <tr key={uniqid()}>
-                <td>{reservation.last_name}</td>
-                <td>{reservation.first_name}</td>
-                <td>{reservation.mobile_number}</td>
-                <td>{reservation.people}</td>
-                <td>{reservation.reservation_time}</td>
-                <td>{reservation.reservation_date}</td>
-                <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
+                <td className="tableCol">{reservation.last_name}</td>
+                <td className="tableCol">{reservation.first_name}</td>
+                <td className="tableCol">{reservation.mobile_number}</td>
+                <td className="tableCol">{reservation.people}</td>
+                <td className="tableCol">{reservation.reservation_time}</td>
+                <td className="tableCol">{reservation.reservation_date}</td>
+                <td className="tableCol" data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
                 <td className="resBtns btn-group">
                 
                 

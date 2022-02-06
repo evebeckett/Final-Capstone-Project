@@ -27,10 +27,21 @@ color: #35F2DF
 .tables td, .tables th {
   font-size: 16px;
   padding: 5px;
+  
+}
+
+.tables th {
+  background-color:#026873
+}
+
+.tableCol {
+  border: 1px solid;
 }
 
 .resBtns {
   margin: 3px;
+  border: none
+
 }
 .resBtn {
   padding: 3px;
@@ -42,6 +53,16 @@ color: #35F2DF
   margin:3px;
   padding:2px;
 }
+
+form input {
+  padding: 5px;
+  margin: 5px;
+}
+
+button {
+  margin: 3px;
+}
+
 @media all and (min-width: 420px) {
   
 }
