@@ -196,7 +196,6 @@ function validateExistenceOfStatus(req, res, next) {
   if (!status || !validStatuses.includes(status)) {
     const error = new Error(`${status} is not a valid status or is unknown.`);
     error.status = 400;
-    // error.message = "Status is unknown.";
     throw error;
   }
   res.status(201);

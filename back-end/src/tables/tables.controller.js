@@ -153,22 +153,7 @@ async function validateSufficientTableCapacity(req, res, next) {
   }
 }
 
-// async function validateTableIsOccupied(req, res, next) {
-//   const { data = {} } = req.body;
-//   let tableId = req.params.table_id;
-
-//   let table = await tablesService.listSingleTable(tableId);
-
-//   if (!table.reservation_id) {
-//     return next({
-//       status: 400,
-//       message: "not occupied",
-//     });
  
-//   }
-//   res.status(200)
-//   next();
-// }
 
 
 
@@ -231,8 +216,6 @@ async function list(req, res, next) {
 }
 
 async function update(req, res, next) {
-  //update reservation to "seated"
- 
   let { reservation_id } = req.body.data;
   let tableId = req.params.table_id;
   
