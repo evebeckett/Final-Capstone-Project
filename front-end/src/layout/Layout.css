@@ -24,6 +24,10 @@ color: #35F2DF
   border-color: #35F2DF;
 }
 
+.tables {
+  margin: 15px;
+}
+
 .tables td, .tables th {
   font-size: 16px;
   padding: 5px;

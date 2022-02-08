@@ -58,9 +58,11 @@ function ReservationsTable({ reservations }) {
                 
                 
                 {reservation.status === "booked" && <Link to={`/reservations/${reservation.reservation_id}/seat`}><button className="btn btn-primary mb-2 resBtn">Seat</button></Link>}
-
-                <Link to={`/reservations/${reservation.reservation_id}/edit`}><button className="btn btn-primary mb-2 resBtn">Edit</button></Link>
+              {reservation.status !== "finished" &&
+                <Link to={`/reservations/${reservation.reservation_id}/edit`}><button className="btn btn-primary mb-2 resBtn">Edit</button></Link> }
+              {reservation.status !=="finished" &&
                 <button id="cancelBtn" data-reservation-id-cancel={reservation.reservation_id} onClick={() =>handleCancel(reservation.reservation_id)} className="btn btn-primary mb-2 resBtn">Cancel</button>
+              }
                 </td>
               </tr>
             );
