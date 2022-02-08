@@ -16,8 +16,8 @@ function TablesTable({ tables }) {
       )
     ) {
     
-      await finishTable(table, tableId)
-      .then(await updateStatus({status: "finished"}, table.reservation_id))
+      finishTable(table, tableId)
+      .then(updateStatus({status: "finished"}, table.reservation_id))
       .then(()=> history.go(0))
       .catch(setError)
  
